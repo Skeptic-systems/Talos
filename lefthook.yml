@@ -2,6 +2,7 @@ pre-commit:
   parallel: true
   commands:
     lint:
+      runner: pwsh -NoLogo -NonInteractive -Command
       run: pnpm biome check --write {staged_files}
       stage_fixed: true
       glob: "*.{js,jsx,ts,tsx,json,jsonc,css}"

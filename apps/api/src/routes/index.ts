@@ -1,6 +1,7 @@
 import type { Hono } from "hono";
 
 import { authRouter } from "./auth";
+import { downloadsRouter } from "./downloads";
 import { systemRouter } from "./system";
 import { usersRouter } from "./users";
 
@@ -17,6 +18,7 @@ type Router = {
 
 const routers: { prefix: string; router: Router }[] = [
 	{ prefix: "/auth", router: authRouter },
+	{ prefix: "/downloads", router: downloadsRouter },
 	{ prefix: "/system", router: systemRouter },
 	{ prefix: "/users", router: usersRouter },
 ];

@@ -51,6 +51,70 @@ export type UpdateRoleRequest = {
 	role: "admin" | "user";
 };
 
+export type DownloadProvider = "winget" | "chocolatey" | "custom";
+export type InstallType = "single" | "multi";
+
+export type DownloadCommand = {
+	id: string;
+	downloadId: string;
+	command: string;
+	sortOrder: number;
+};
+
+export type Download = {
+	id: string;
+	displayName: string;
+	packageId: string | null;
+	description: string | null;
+	provider: DownloadProvider;
+	installType: InstallType;
+	cardArtwork: string | null;
+	icon: string | null;
+	previewImage: string | null;
+	scriptPath: string | null;
+	scriptContent?: string | null;
+	isInteractive: boolean;
+	createdById: string;
+	createdAt: string;
+	updatedAt: string;
+	commands: DownloadCommand[];
+};
+
+export type DownloadListItem = Omit<Download, "scriptContent">;
+
+export type CreateDownloadRequest = {
+	displayName: string;
+	packageId?: string | null;
+	description?: string | null;
+	provider: DownloadProvider;
+	installType?: InstallType;
+	cardArtwork?: string | null;
+	icon?: string | null;
+	previewImage?: string | null;
+	scriptPath?: string | null;
+	scriptContent?: string | null;
+	isInteractive?: boolean;
+	commands: string[];
+};
+
+export type UpdateDownloadRequest = Partial<CreateDownloadRequest>;
+
+export type DownloadStats = {
+	totalDownloads: number;
+	singleInstall: number;
+	multiInstall: number;
+	activeUsers: number;
+};
+
+export type RecentDownload = {
+	id: string;
+	displayName: string;
+	provider: DownloadProvider;
+	installType: InstallType;
+	icon: string | null;
+	createdAt: string;
+};
+
 export type ApiError = {
 	error: string;
 	message?: string;
@@ -197,6 +261,52 @@ class ApiClient {
 			method: "PUT",
 			body: JSON.stringify(data),
 		});
+	}
+
+	async getDownloadStats(): Promise<{ stats: DownloadStats }> {
+		return this.request<{ stats: DownloadStats }>("/v1/downloads/stats");
+	}
+
+	async getRecentDownloads(): Promise<{ downloads: RecentDownload[] }> {
+		return this.request<{ downloads: RecentDownload[] }>("/v1/downloads/recent");
+	}
+
+	async listDownloads(): Promise<{ downloads: DownloadListItem[] }> {
+		return this.request<{ downloads: DownloadListItem[] }>("/v1/downloads");
+	}
+
+	async getDownload(downloadId: string): Promise<{ download: Download }> {
+		return this.request<{ download: Download }>(`/v1/downloads/${downloadId}`);
+	}
+
+	async createDownload(
+		data: CreateDownloadRequest,
+	): Promise<{ download: Download }> {
+		return this.request<{ download: Download }>("/v1/downloads", {
+			method: "POST",
+			body: JSON.stringify(data),
+		});
+	}
+
+	async updateDownload(
+		downloadId: string,
+		data: UpdateDownloadRequest,
+	): Promise<{ download: Download }> {
+		return this.request<{ download: Download }>(`/v1/downloads/${downloadId}`, {
+			method: "PUT",
+			body: JSON.stringify(data),
+		});
+	}
+
+	async deleteDownload(
+		downloadId: string,
+	): Promise<{ success: boolean; message: string }> {
+		return this.request<{ success: boolean; message: string }>(
+			`/v1/downloads/${downloadId}`,
+			{
+				method: "DELETE",
+			},
+		);
 	}
 }
 

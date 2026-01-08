@@ -1,4 +1,10 @@
-import { SignOut, User, UserCircle, Users } from "@phosphor-icons/react";
+import {
+	Download,
+	SignOut,
+	User,
+	UserCircle,
+	Users,
+} from "@phosphor-icons/react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 
@@ -44,14 +50,26 @@ export function AppNavbar({ user }: AppNavbarProps) {
 	return (
 		<header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-900/80">
 			<div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
-				<Link to="/dashboard" className="flex items-center gap-3">
-					<img
-						src="/icon.png"
-						alt="Talos"
-						className="h-9 w-auto object-contain"
-					/>
-					<span className="font-bold text-xl text-zinc-900 dark:text-zinc-100">Talos</span>
-				</Link>
+				<div className="flex items-center gap-6">
+					<Link to="/dashboard" className="flex items-center gap-3">
+						<img
+							src="/icon.png"
+							alt="Talos"
+							className="h-9 w-auto object-contain"
+						/>
+						<span className="font-bold text-xl text-zinc-900 dark:text-zinc-100">Talos</span>
+					</Link>
+
+					<nav className="hidden items-center gap-1 sm:flex">
+						<Link
+							to="/downloads"
+							className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 [&.active]:bg-zinc-100 [&.active]:text-zinc-900 dark:[&.active]:bg-zinc-800 dark:[&.active]:text-zinc-100"
+						>
+							<Download className="h-4 w-4" weight="bold" />
+							Downloads
+						</Link>
+					</nav>
+				</div>
 
 				<div className="flex items-center gap-2">
 					<ThemeToggle />

@@ -14,7 +14,11 @@ import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 import { Route as authInitAuthRouteImport } from './routes/(auth)/init-auth'
 import { Route as protectedLayoutUserManagementRouteImport } from './routes/(protected)/_layout/user-management'
 import { Route as protectedLayoutProfileRouteImport } from './routes/(protected)/_layout/profile'
+import { Route as protectedLayoutDownloadsRouteImport } from './routes/(protected)/_layout/downloads'
+import { Route as protectedLayoutDownloadCreateRouteImport } from './routes/(protected)/_layout/download-create'
 import { Route as protectedLayoutDashboardRouteImport } from './routes/(protected)/_layout/dashboard'
+import { Route as protectedLayoutDownloadEditDownloadIdRouteImport } from './routes/(protected)/_layout/download-edit.$downloadId'
+import { Route as protectedLayoutDownloadDetailDownloadIdRouteImport } from './routes/(protected)/_layout/download-detail.$downloadId'
 
 const protectedLayoutRoute = protectedLayoutRouteImport.update({
   id: '/(protected)/_layout',
@@ -41,10 +45,34 @@ const protectedLayoutProfileRoute = protectedLayoutProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => protectedLayoutRoute,
 } as any)
+const protectedLayoutDownloadsRoute =
+  protectedLayoutDownloadsRouteImport.update({
+    id: '/downloads',
+    path: '/downloads',
+    getParentRoute: () => protectedLayoutRoute,
+  } as any)
+const protectedLayoutDownloadCreateRoute =
+  protectedLayoutDownloadCreateRouteImport.update({
+    id: '/download-create',
+    path: '/download-create',
+    getParentRoute: () => protectedLayoutRoute,
+  } as any)
 const protectedLayoutDashboardRoute =
   protectedLayoutDashboardRouteImport.update({
     id: '/dashboard',
     path: '/dashboard',
+    getParentRoute: () => protectedLayoutRoute,
+  } as any)
+const protectedLayoutDownloadEditDownloadIdRoute =
+  protectedLayoutDownloadEditDownloadIdRouteImport.update({
+    id: '/download-edit/$downloadId',
+    path: '/download-edit/$downloadId',
+    getParentRoute: () => protectedLayoutRoute,
+  } as any)
+const protectedLayoutDownloadDetailDownloadIdRoute =
+  protectedLayoutDownloadDetailDownloadIdRouteImport.update({
+    id: '/download-detail/$downloadId',
+    path: '/download-detail/$downloadId',
     getParentRoute: () => protectedLayoutRoute,
   } as any)
 
@@ -52,15 +80,23 @@ export interface FileRoutesByFullPath {
   '/init-auth': typeof authInitAuthRoute
   '/sign-in': typeof authSignInRoute
   '/dashboard': typeof protectedLayoutDashboardRoute
+  '/download-create': typeof protectedLayoutDownloadCreateRoute
+  '/downloads': typeof protectedLayoutDownloadsRoute
   '/profile': typeof protectedLayoutProfileRoute
   '/user-management': typeof protectedLayoutUserManagementRoute
+  '/download-detail/$downloadId': typeof protectedLayoutDownloadDetailDownloadIdRoute
+  '/download-edit/$downloadId': typeof protectedLayoutDownloadEditDownloadIdRoute
 }
 export interface FileRoutesByTo {
   '/init-auth': typeof authInitAuthRoute
   '/sign-in': typeof authSignInRoute
   '/dashboard': typeof protectedLayoutDashboardRoute
+  '/download-create': typeof protectedLayoutDownloadCreateRoute
+  '/downloads': typeof protectedLayoutDownloadsRoute
   '/profile': typeof protectedLayoutProfileRoute
   '/user-management': typeof protectedLayoutUserManagementRoute
+  '/download-detail/$downloadId': typeof protectedLayoutDownloadDetailDownloadIdRoute
+  '/download-edit/$downloadId': typeof protectedLayoutDownloadEditDownloadIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -68,8 +104,12 @@ export interface FileRoutesById {
   '/(auth)/sign-in': typeof authSignInRoute
   '/(protected)/_layout': typeof protectedLayoutRouteWithChildren
   '/(protected)/_layout/dashboard': typeof protectedLayoutDashboardRoute
+  '/(protected)/_layout/download-create': typeof protectedLayoutDownloadCreateRoute
+  '/(protected)/_layout/downloads': typeof protectedLayoutDownloadsRoute
   '/(protected)/_layout/profile': typeof protectedLayoutProfileRoute
   '/(protected)/_layout/user-management': typeof protectedLayoutUserManagementRoute
+  '/(protected)/_layout/download-detail/$downloadId': typeof protectedLayoutDownloadDetailDownloadIdRoute
+  '/(protected)/_layout/download-edit/$downloadId': typeof protectedLayoutDownloadEditDownloadIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -77,18 +117,35 @@ export interface FileRouteTypes {
     | '/init-auth'
     | '/sign-in'
     | '/dashboard'
+    | '/download-create'
+    | '/downloads'
     | '/profile'
     | '/user-management'
+    | '/download-detail/$downloadId'
+    | '/download-edit/$downloadId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/init-auth' | '/sign-in' | '/dashboard' | '/profile' | '/user-management'
+  to:
+    | '/init-auth'
+    | '/sign-in'
+    | '/dashboard'
+    | '/download-create'
+    | '/downloads'
+    | '/profile'
+    | '/user-management'
+    | '/download-detail/$downloadId'
+    | '/download-edit/$downloadId'
   id:
     | '__root__'
     | '/(auth)/init-auth'
     | '/(auth)/sign-in'
     | '/(protected)/_layout'
     | '/(protected)/_layout/dashboard'
+    | '/(protected)/_layout/download-create'
+    | '/(protected)/_layout/downloads'
     | '/(protected)/_layout/profile'
     | '/(protected)/_layout/user-management'
+    | '/(protected)/_layout/download-detail/$downloadId'
+    | '/(protected)/_layout/download-edit/$downloadId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -134,6 +191,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedLayoutProfileRouteImport
       parentRoute: typeof protectedLayoutRoute
     }
+    '/(protected)/_layout/downloads': {
+      id: '/(protected)/_layout/downloads'
+      path: '/downloads'
+      fullPath: '/downloads'
+      preLoaderRoute: typeof protectedLayoutDownloadsRouteImport
+      parentRoute: typeof protectedLayoutRoute
+    }
+    '/(protected)/_layout/download-create': {
+      id: '/(protected)/_layout/download-create'
+      path: '/download-create'
+      fullPath: '/download-create'
+      preLoaderRoute: typeof protectedLayoutDownloadCreateRouteImport
+      parentRoute: typeof protectedLayoutRoute
+    }
     '/(protected)/_layout/dashboard': {
       id: '/(protected)/_layout/dashboard'
       path: '/dashboard'
@@ -141,19 +212,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedLayoutDashboardRouteImport
       parentRoute: typeof protectedLayoutRoute
     }
+    '/(protected)/_layout/download-edit/$downloadId': {
+      id: '/(protected)/_layout/download-edit/$downloadId'
+      path: '/download-edit/$downloadId'
+      fullPath: '/download-edit/$downloadId'
+      preLoaderRoute: typeof protectedLayoutDownloadEditDownloadIdRouteImport
+      parentRoute: typeof protectedLayoutRoute
+    }
+    '/(protected)/_layout/download-detail/$downloadId': {
+      id: '/(protected)/_layout/download-detail/$downloadId'
+      path: '/download-detail/$downloadId'
+      fullPath: '/download-detail/$downloadId'
+      preLoaderRoute: typeof protectedLayoutDownloadDetailDownloadIdRouteImport
+      parentRoute: typeof protectedLayoutRoute
+    }
   }
 }
 
 interface protectedLayoutRouteChildren {
   protectedLayoutDashboardRoute: typeof protectedLayoutDashboardRoute
+  protectedLayoutDownloadCreateRoute: typeof protectedLayoutDownloadCreateRoute
+  protectedLayoutDownloadsRoute: typeof protectedLayoutDownloadsRoute
   protectedLayoutProfileRoute: typeof protectedLayoutProfileRoute
   protectedLayoutUserManagementRoute: typeof protectedLayoutUserManagementRoute
+  protectedLayoutDownloadDetailDownloadIdRoute: typeof protectedLayoutDownloadDetailDownloadIdRoute
+  protectedLayoutDownloadEditDownloadIdRoute: typeof protectedLayoutDownloadEditDownloadIdRoute
 }
 
 const protectedLayoutRouteChildren: protectedLayoutRouteChildren = {
   protectedLayoutDashboardRoute: protectedLayoutDashboardRoute,
+  protectedLayoutDownloadCreateRoute: protectedLayoutDownloadCreateRoute,
+  protectedLayoutDownloadsRoute: protectedLayoutDownloadsRoute,
   protectedLayoutProfileRoute: protectedLayoutProfileRoute,
   protectedLayoutUserManagementRoute: protectedLayoutUserManagementRoute,
+  protectedLayoutDownloadDetailDownloadIdRoute:
+    protectedLayoutDownloadDetailDownloadIdRoute,
+  protectedLayoutDownloadEditDownloadIdRoute:
+    protectedLayoutDownloadEditDownloadIdRoute,
 }
 
 const protectedLayoutRouteWithChildren = protectedLayoutRoute._addFileChildren(

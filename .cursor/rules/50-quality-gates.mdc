@@ -1,0 +1,225 @@
+---
+description: "Code quality requirements, linting, and type safety. USE WHEN writing or reviewing code."
+globs: []
+alwaysApply: true
+---
+
+# Quality Gates
+
+## Pre-Commit Checks
+
+Lefthook runs automatically on commit:
+
+```yaml
+# lefthook.yml
+pre-commit:
+  commands:
+    lint:
+      run: pnpm biome check --write {staged_files}
+```
+
+**Run manually before committing:**
+```bash
+pnpm check
+```
+
+## TypeScript Requirements
+
+### Strict Typing
+
+❌ **FORBIDDEN:**
+```typescript
+// No any types
+function process(data: any) { ... }
+const result: any = fetchData();
+
+// No implicit any
+function handle(event) { ... } // Missing type
+
+// No generic collections without types
+const items = [];
+const map = new Map();
+```
+
+✅ **Required:**
+```typescript
+// Explicit types everywhere
+function process(data: UserInput): ProcessedResult { ... }
+const result: ApiResponse = await fetchData();
+
+// Typed parameters
+function handle(event: MouseEvent) { ... }
+
+// Typed collections
+const items: string[] = [];
+const map = new Map<string, User>();
+```
+
+### Type Definitions
+
+Create proper types for complex structures:
+
+```typescript
+// ✅ Define types in relevant location
+// packages/api/src/types/user.ts
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  role: "admin" | "user";
+  createdAt: Date;
+}
+
+// Use the type
+function updateUser(profile: UserProfile): Promise<UserProfile> { ... }
+```
+
+### Zod for Runtime Validation
+
+```typescript
+// Define schema
+const userSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1),
+  email: z.string().email(),
+});
+
+// Infer type from schema
+type User = z.infer<typeof userSchema>;
+```
+
+## Code Style
+
+### Functional Programming Preferred
+
+```typescript
+// ✅ Pure functions
+function calculateTotal(items: Item[]): number {
+  return items.reduce((sum, item) => sum + item.price, 0);
+}
+
+// ✅ Immutable operations
+function addItem(items: Item[], newItem: Item): Item[] {
+  return [...items, newItem];
+}
+
+// ❌ Avoid mutation
+function addItem(items: Item[], newItem: Item): void {
+  items.push(newItem); // Mutates input!
+}
+```
+
+### Classes Only for External Integrations
+
+```typescript
+// ✅ Class for external service client
+class DatabaseClient {
+  constructor(private connectionUrl: string) {}
+  async query(sql: string): Promise<Result> { ... }
+}
+
+// ❌ Don't use classes for business logic
+class UserService {
+  createUser(data: UserData) { ... } // Use function instead
+}
+
+// ✅ Use functions for business logic
+export function createUser(data: UserData): Promise<User> { ... }
+```
+
+## DRY, KISS, YAGNI
+
+### DRY (Don't Repeat Yourself)
+
+Before writing new code:
+1. Check if similar logic exists
+2. Extract shared logic to utilities
+3. Create shared components for UI patterns
+
+### KISS (Keep It Simple)
+
+```typescript
+// ❌ Over-engineered
+const getUserName = (user: User) => {
+  const nameParser = new NameParser(user);
+  return nameParser.parse().format().capitalize().toString();
+};
+
+// ✅ Simple and clear
+const getUserName = (user: User): string => user.name;
+```
+
+### YAGNI (You Aren't Gonna Need It)
+
+- Don't add features "just in case"
+- Don't create abstractions for single use cases
+- Don't add configuration for one value
+
+## Biome Rules
+
+Key rules enforced (see `biome.json`):
+
+| Rule | Level | Purpose |
+|------|-------|---------|
+| `noParameterAssign` | error | Don't mutate parameters |
+| `useAsConstAssertion` | error | Use `as const` for literals |
+| `useSelfClosingElements` | error | `<div />` not `<div></div>` |
+| `noUnusedTemplateLiteral` | error | Use string when no interpolation |
+| `noInferrableTypes` | error | Don't annotate obvious types |
+| `noUselessElse` | error | Remove unnecessary else blocks |
+| `useSortedClasses` | warn | Sort Tailwind classes |
+
+## Import Organization
+
+Biome organizes imports automatically. Manual order:
+
+```typescript
+// 1. External packages
+import { z } from "zod";
+import { createFileRoute } from "@tanstack/react-router";
+
+// 2. Internal packages
+import { db } from "@Talos/db";
+import { env } from "@Talos/env/server";
+
+// 3. Local imports (relative)
+import { UserCard } from "@/components/UserCard";
+import { formatDate } from "@/lib/utils";
+```
+
+## File Size Limits
+
+| File Type | Max Lines | Action if Exceeded |
+|-----------|-----------|-------------------|
+| Route files | 300 | Extract components |
+| Components | 200 | Split into smaller components |
+| tRPC routers | 300 | Split into sub-routers |
+| Utility files | 150 | Create separate utility files |
+
+## Comments
+
+- Write comments in **English only**
+- Minimal comments - code should be self-documenting
+- Comment "why", not "what"
+
+```typescript
+// ❌ Useless comment
+// Get the user
+const user = getUser();
+
+// ✅ Explains why
+// Cache user to avoid re-fetching on every route change
+const user = useMemo(() => getUser(), []);
+```
+
+## Quality Checklist
+
+Before submitting code:
+
+- [ ] No TypeScript errors (`pnpm check-types`)
+- [ ] Biome passes (`pnpm check`)
+- [ ] No `any` types
+- [ ] No hardcoded values that should be env vars
+- [ ] Functions are pure where possible
+- [ ] No duplicate code
+- [ ] File size within limits

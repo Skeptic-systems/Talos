@@ -30,7 +30,7 @@ pnpm install
 This project uses PostgreSQL with Drizzle ORM.
 
 1. Make sure you have a PostgreSQL database set up.
-2. Update your `apps/server/.env` file with your PostgreSQL connection details.
+2. Update your `.env` file in the project root with your PostgreSQL connection details.
 
 3. Apply the schema to your database:
 
@@ -52,8 +52,9 @@ The API is running at [http://localhost:3000](http://localhost:3000).
 ```
 Talos/
 ├── apps/
-│   ├── web/         # Frontend application (React + TanStack Start)
-│   └── server/      # Backend API (Hono, TRPC)
+│   ├── api/         # Backend API (Hono, TRPC)
+│   ├── apimanager/  # API management frontend (React + TanStack Start)
+│   └── www/         # Website frontend (React + TanStack Start)
 ├── packages/
 │   ├── api/         # API layer / business logic
 │   ├── auth/        # Authentication configuration & logic
@@ -64,8 +65,9 @@ Talos/
 
 - `pnpm run dev`: Start all applications in development mode
 - `pnpm run build`: Build all applications
-- `pnpm run dev:web`: Start only the web application
-- `pnpm run dev:server`: Start only the server
+- `pnpm run api:dev`: Start only the API server
+- `pnpm run apimanager:dev`: Start only the API manager frontend
+- `pnpm run www:dev`: Start only the website frontend
 - `pnpm run check-types`: Check TypeScript types across all apps
 - `pnpm run db:push`: Push schema changes to database
 - `pnpm run db:studio`: Open database studio UI

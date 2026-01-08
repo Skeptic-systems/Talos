@@ -1,0 +1,226 @@
+---
+description: "Security best practices and hardening requirements. USE WHEN writing backend code, authentication, or handling user data."
+globs:
+  - "packages/api/**"
+  - "packages/auth/**"
+  - "apps/api/**"
+alwaysApply: false
+---
+
+# Security Hardening
+
+## Core Principles
+
+1. **Defense in Depth** - Multiple layers of security
+2. **Fail Secure** - Errors should deny access, not grant it
+3. **Least Privilege** - Only grant necessary permissions
+4. **Input Validation** - Never trust user input
+
+## Input Validation
+
+### ALWAYS Validate with Zod
+
+Every tRPC procedure MUST validate inputs:
+
+```typescript
+// ✅ Correct
+export const userRouter = router({
+  updateProfile: protectedProcedure
+    .input(z.object({
+      name: z.string().min(1).max(100),
+      email: z.string().email(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      // input is validated and typed
+    }),
+});
+
+// ❌ NEVER do this
+export const userRouter = router({
+  updateProfile: protectedProcedure
+    .mutation(async ({ input }) => {
+      // No validation - input could be anything
+    }),
+});
+```
+
+### Validation Patterns
+
+```typescript
+// String constraints
+z.string().min(1).max(255)
+z.string().email()
+z.string().url()
+z.string().uuid()
+z.string().regex(/^[a-zA-Z0-9-]+$/)
+
+// Number constraints
+z.number().int().positive()
+z.number().min(0).max(100)
+
+// Enums for known values
+z.enum(["admin", "user", "guest"])
+
+// Arrays with limits
+z.array(z.string()).max(100)
+
+// Objects with strict mode
+z.object({ ... }).strict()
+```
+
+## Authentication & Authorization
+
+### Protected Procedures
+
+Use `protectedProcedure` for authenticated endpoints:
+
+```typescript
+// packages/api/src/index.ts
+export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
+  if (!ctx.session) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Authentication required",
+    });
+  }
+  return next({ ctx: { ...ctx, session: ctx.session } });
+});
+```
+
+### Role-Based Access
+
+```typescript
+const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
+  if (ctx.session.user.role !== "admin") {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Admin access required",
+    });
+  }
+  return next({ ctx });
+});
+```
+
+## Secrets Management
+
+### NEVER Expose Secrets
+
+```typescript
+// ❌ NEVER log secrets
+console.log("Auth secret:", env.BETTER_AUTH_SECRET);
+
+// ❌ NEVER return secrets in responses
+return { 
+  user: ctx.session.user,
+  token: ctx.session.token, // DON'T expose tokens
+};
+
+// ✅ Return only necessary data
+return { 
+  user: {
+    id: ctx.session.user.id,
+    name: ctx.session.user.name,
+    email: ctx.session.user.email,
+  }
+};
+```
+
+### Client-Side Security
+
+```typescript
+// ❌ NEVER import server env in client code
+import { env } from "@Talos/env/server"; // Will expose secrets!
+
+// ✅ Only use client env
+import { env } from "@Talos/env/web";
+```
+
+## Cookie Security
+
+Better-Auth is configured with secure cookie settings:
+
+```typescript
+// packages/auth/src/index.ts
+advanced: {
+  defaultCookieAttributes: {
+    sameSite: "none",  // Required for cross-origin
+    secure: true,      // HTTPS only
+    httpOnly: true,    // No JS access
+  },
+},
+```
+
+**NEVER** use localStorage for auth tokens.
+
+## Error Handling
+
+### Safe Error Messages
+
+```typescript
+// ❌ Exposes internal details
+throw new TRPCError({
+  code: "INTERNAL_SERVER_ERROR",
+  message: `Database error: ${error.message}`, // Leaks DB info
+  cause: error, // Leaks stack trace
+});
+
+// ✅ Generic user-facing message
+logger.error("Database error", { error, userId: ctx.session?.user.id });
+throw new TRPCError({
+  code: "INTERNAL_SERVER_ERROR",
+  message: "An unexpected error occurred. Please try again.",
+});
+```
+
+### Error Logging
+
+Log errors server-side with context, but without secrets:
+
+```typescript
+// ✅ Safe logging
+logger.error("Operation failed", {
+  userId: ctx.session?.user.id,
+  operation: "updateProfile",
+  errorCode: error.code,
+});
+
+// ❌ Unsafe logging
+logger.error("Operation failed", {
+  user: ctx.session, // May contain tokens
+  password: input.password, // NEVER log passwords
+  error: error, // May contain sensitive stack
+});
+```
+
+## SQL Injection Prevention
+
+Drizzle ORM prevents SQL injection by default. **NEVER** use raw SQL:
+
+```typescript
+// ✅ Safe - Drizzle handles escaping
+await db.select().from(users).where(eq(users.email, input.email));
+
+// ❌ DANGEROUS - Raw SQL with interpolation
+await db.execute(`SELECT * FROM users WHERE email = '${input.email}'`);
+```
+
+## Rate Limiting Checklist
+
+When implementing sensitive endpoints, consider:
+
+- [ ] Login attempts - limit per IP/email
+- [ ] Password reset requests - limit per email
+- [ ] API key creation - limit per user
+- [ ] File uploads - limit size and count
+
+## Security Checklist for New Features
+
+Before shipping:
+
+- [ ] All inputs validated with Zod
+- [ ] Authentication required where needed
+- [ ] Authorization checks for resources
+- [ ] No secrets in client code
+- [ ] No secrets in logs
+- [ ] Error messages don't leak internals
+- [ ] Database queries use ORM (no raw SQL)

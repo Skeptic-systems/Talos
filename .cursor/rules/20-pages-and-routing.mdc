@@ -1,0 +1,200 @@
+---
+description: "TanStack Router conventions and page structure. USE WHEN creating or modifying route files."
+globs:
+  - "apps/*/src/routes/**"
+alwaysApply: false
+---
+
+# Pages & Routing (TanStack Router)
+
+## File-Based Routing Structure
+
+TanStack Router uses file-based routing in `apps/*/src/routes/`:
+
+```
+src/routes/
+├── __root.tsx          # Root layout (required)
+├── index.tsx           # Home route "/" - EXCEPTION: allowed here
+├── dashboard.tsx       # /dashboard
+├── login.tsx           # /login
+├── auth/
+│   ├── login.tsx       # /auth/login
+│   └── register.tsx    # /auth/register
+└── settings/
+    ├── profile.tsx     # /settings/profile
+    └── api-keys.tsx    # /settings/api-keys
+```
+
+## Route File Naming
+
+### FORBIDDEN in Routes
+```
+❌ page.tsx
+❌ Page.tsx
+❌ view.tsx
+❌ component.tsx
+```
+
+### Allowed Patterns
+```
+✅ dashboard.tsx         → /dashboard
+✅ user-settings.tsx     → /user-settings
+✅ api-keys.tsx          → /api-keys
+✅ $id.tsx               → Dynamic segment /:id
+✅ $.tsx                 → Catch-all route
+✅ _layout.tsx           → Layout route (underscore prefix)
+✅ (group)/              → Route groups (parentheses)
+```
+
+## Route File Structure
+
+Every route file follows this pattern:
+
+```typescript
+import { createFileRoute } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/dashboard")({
+  component: DashboardPage,
+  beforeLoad: async ({ context }) => {
+    // Auth checks, data prefetching
+  },
+  loader: async ({ context }) => {
+    // Data loading
+  },
+});
+
+function DashboardPage() {
+  // Page component - keep this focused
+  return (
+    <div>
+      <DashboardHeader />
+      <DashboardContent />
+    </div>
+  );
+}
+```
+
+## Code Size Limits
+
+**Route files should NOT exceed 300 lines.**
+
+When a route file grows large:
+
+1. Extract components to `src/components/<feature>/`
+2. Extract hooks to `src/hooks/` or co-locate with components
+3. Extract business logic to `packages/api/`
+
+### Example: Splitting a Large Route
+
+```
+❌ Before (500 lines in one file):
+src/routes/dashboard.tsx
+
+✅ After:
+src/routes/dashboard.tsx (100 lines - route definition + composition)
+src/components/dashboard/
+├── DashboardStats.tsx
+├── RecentActivityList.tsx
+├── QuickActions.tsx
+└── useDashboardData.ts
+```
+
+## Protected Routes
+
+Use `beforeLoad` for authentication checks:
+
+```typescript
+export const Route = createFileRoute("/dashboard")({
+  beforeLoad: async () => {
+    const session = await getUser();
+    if (!session) {
+      throw redirect({ to: "/login" });
+    }
+    return { session };
+  },
+  component: DashboardPage,
+});
+```
+
+## Data Loading
+
+Use the route context for tRPC integration:
+
+```typescript
+export const Route = createFileRoute("/todos")({
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(
+      context.trpc.todo.getAll.queryOptions()
+    );
+  },
+  component: TodosPage,
+});
+
+function TodosPage() {
+  const trpc = useTRPC();
+  const todos = useQuery(trpc.todo.getAll.queryOptions());
+  // ...
+}
+```
+
+## Layout Routes
+
+Use `_layout.tsx` for shared layouts:
+
+```
+src/routes/
+├── settings/
+│   ├── _layout.tsx      # Shared settings layout
+│   ├── profile.tsx      # /settings/profile
+│   └── api-keys.tsx     # /settings/api-keys
+```
+
+```typescript
+// settings/_layout.tsx
+import { createFileRoute, Outlet } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/settings/_layout")({
+  component: SettingsLayout,
+});
+
+function SettingsLayout() {
+  return (
+    <div className="grid grid-cols-[200px_1fr]">
+      <SettingsSidebar />
+      <Outlet />
+    </div>
+  );
+}
+```
+
+## Route Groups
+
+Use parentheses for logical grouping without URL impact:
+
+```
+src/routes/
+├── (auth)/
+│   ├── login.tsx        # /login (not /auth/login)
+│   └── register.tsx     # /register
+├── (marketing)/
+│   ├── about.tsx        # /about
+│   └── pricing.tsx      # /pricing
+```
+
+## Search Params & Path Params
+
+Define with Zod validation:
+
+```typescript
+import { z } from "zod";
+
+const searchSchema = z.object({
+  page: z.number().optional().default(1),
+  filter: z.string().optional(),
+});
+
+export const Route = createFileRoute("/users")({
+  validateSearch: searchSchema,
+  component: UsersPage,
+});
+```

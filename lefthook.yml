@@ -1,0 +1,8 @@
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      run: pnpm biome check --write {staged_files}
+      stage_fixed: true
+      glob: "*.{js,jsx,ts,tsx,json,jsonc,css}"
+      exclude: "**/node_modules/**"

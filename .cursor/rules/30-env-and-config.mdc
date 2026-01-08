@@ -1,0 +1,178 @@
+---
+description: "Environment variable handling and configuration. USE WHEN working with environment variables or configuration."
+globs: []
+alwaysApply: true
+---
+
+# Environment Variables & Configuration
+
+## Core Principle
+
+**NEVER hardcode URLs, secrets, or configuration values.**
+
+All configuration MUST come from environment variables via `@Talos/env`.
+
+## Environment Variable Architecture
+
+```
+env.example                    # Template (source of truth)
+.env                           # Local values (git-ignored)
+packages/env/src/
+├── server.ts                  # Server-side env (DATABASE_URL, secrets)
+├── web.ts                     # Client-side env (VITE_* prefixed)
+└── native.ts                  # Native app env (if applicable)
+```
+
+## Using Environment Variables
+
+### Server-Side (Backend, tRPC)
+```typescript
+import { env } from "@Talos/env/server";
+
+// ✅ Correct
+const dbUrl = env.DATABASE_URL;
+const authUrl = env.BETTER_AUTH_URL;
+
+// ❌ NEVER do this
+const dbUrl = process.env.DATABASE_URL;
+const apiUrl = "http://localhost:3000";
+```
+
+### Client-Side (React Apps)
+```typescript
+import { env } from "@Talos/env/web";
+
+// ✅ Correct
+const serverUrl = env.VITE_SERVER_URL;
+
+// ❌ NEVER do this
+const serverUrl = import.meta.env.VITE_SERVER_URL;
+const serverUrl = "http://localhost:3000";
+```
+
+## env.example Rules
+
+### 1. ALWAYS Check Before Adding
+
+Before adding a new variable:
+1. Check if it already exists in `env.example`
+2. Check if a similar variable exists under a different name
+3. Reuse existing variables when possible
+
+### 2. NO Duplicate Values
+
+❌ **FORBIDDEN:**
+```bash
+# Same value under different names
+API_URL=https://api.example.com
+BACKEND_URL=https://api.example.com
+SERVER_URL=https://api.example.com
+```
+
+✅ **Correct:**
+```bash
+# One variable, one purpose
+API_BASE_URL=https://api.example.com
+```
+
+### 3. Structured Sections
+
+`env.example` MUST be organized with section headers:
+
+```bash
+# ============================================
+# API Server
+# ============================================
+BETTER_AUTH_SECRET=
+BETTER_AUTH_URL=
+CORS_ORIGIN=
+
+# ============================================
+# Database
+# ============================================
+DATABASE_URL=
+
+# ============================================
+# Frontend (Vite)
+# ============================================
+VITE_SERVER_URL=
+
+# ============================================
+# Optional / Development
+# ============================================
+NODE_ENV=development
+```
+
+### 4. No Sensitive Defaults
+
+```bash
+# ✅ Empty placeholder
+BETTER_AUTH_SECRET=
+
+# ❌ Real secret as example
+BETTER_AUTH_SECRET=Z2bIcEXDnxFKSATcLoGUwvnjyjJA4uAX
+```
+
+## Adding New Environment Variables
+
+### Step 1: Add to env.example
+```bash
+# In env.example
+NEW_API_KEY=
+```
+
+### Step 2: Add to @Talos/env schema
+
+For server variables (`packages/env/src/server.ts`):
+```typescript
+export const env = createEnv({
+  server: {
+    // ... existing
+    NEW_API_KEY: z.string().min(1),
+  },
+  runtimeEnv: process.env,
+});
+```
+
+For client variables (`packages/env/src/web.ts`):
+```typescript
+export const env = createEnv({
+  clientPrefix: "VITE_",
+  client: {
+    // ... existing
+    VITE_NEW_FEATURE_FLAG: z.boolean().optional(),
+  },
+  runtimeEnv: (import.meta as any).env,
+});
+```
+
+### Step 3: Use via @Talos/env
+```typescript
+import { env } from "@Talos/env/server";
+const apiKey = env.NEW_API_KEY;
+```
+
+## Current Variables Reference
+
+### Server Variables
+| Variable | Purpose | Required |
+|----------|---------|----------|
+| `DATABASE_URL` | PostgreSQL connection string | Yes |
+| `BETTER_AUTH_SECRET` | Auth encryption key (min 32 chars) | Yes |
+| `BETTER_AUTH_URL` | Auth server URL | Yes |
+| `CORS_ORIGIN` | Allowed CORS origin | Yes |
+| `NODE_ENV` | Environment mode | No (defaults to development) |
+
+### Client Variables
+| Variable | Purpose | Required |
+|----------|---------|----------|
+| `VITE_SERVER_URL` | API server URL for frontend | Yes |
+
+## Validation
+
+All environment variables are validated at startup using Zod:
+
+- Missing required variables → Application fails to start
+- Invalid format → Clear error message
+
+This ensures production deployments have all required configuration.

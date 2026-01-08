@@ -1,0 +1,194 @@
+---
+description: "Code hygiene and cleanup requirements. USE WHEN refactoring or removing features."
+globs: []
+alwaysApply: true
+---
+
+# Code Cleanup & Hygiene
+
+## Core Principle
+
+**Keep the codebase clean. Delete what's not used.**
+
+Dead code is technical debt. It confuses developers, increases bundle size, and makes refactoring harder.
+
+## What to Remove
+
+### 1. Unused Code
+
+```typescript
+// ❌ Dead function nobody calls
+function legacyUserFormat(user: User) {
+  return `${user.firstName} ${user.lastName}`;
+}
+
+// ❌ Unused imports
+import { something } from "never-used";
+
+// ❌ Unused variables
+const unusedConfig = { ... };
+
+// ❌ Unused exports
+export const DEPRECATED_CONSTANT = "old";
+```
+
+### 2. Commented-Out Code
+
+```typescript
+// ❌ Don't keep old implementations
+function getUser(id: string) {
+  // Old implementation:
+  // const user = await legacyDb.findUser(id);
+  // if (user) {
+  //   return transformUser(user);
+  // }
+  // return null;
+  
+  return db.select().from(users).where(eq(users.id, id));
+}
+
+// ✅ Just delete it - git has the history
+function getUser(id: string) {
+  return db.select().from(users).where(eq(users.id, id));
+}
+```
+
+### 3. Obsolete Files
+
+When replacing a feature or library:
+
+```
+❌ Leaving old files:
+src/
+├── auth-old.ts        # "Just in case"
+├── auth.ts
+├── db-drizzle.ts
+└── db-prisma.ts       # Old ORM, not used
+
+✅ Clean state:
+src/
+├── auth.ts
+└── db.ts
+```
+
+### 4. Deprecated Dependencies
+
+When removing a dependency:
+
+1. Remove from `package.json`
+2. Delete all import statements
+3. Delete all usage code
+4. Delete any related config files
+5. Run `pnpm install` to update lockfile
+
+## When to Clean Up
+
+### During Feature Work
+
+- Remove code that the new feature replaces
+- Delete imports that are no longer needed
+- Clean up temporary debugging code
+
+### After Removing Features
+
+When a feature is removed:
+
+1. Delete the feature's route files
+2. Delete related components
+3. Delete related API endpoints
+4. Delete related database schema (with migration)
+5. Delete related tests
+6. Update navigation/links that pointed to the feature
+
+### When Changing Libraries
+
+Example: Switching from Library A to Library B
+
+```
+1. Add Library B
+2. Migrate code to use Library B
+3. Remove ALL Library A code
+4. Remove Library A from package.json
+5. Delete any Library A config files
+```
+
+## Cleanup Checklist
+
+Before completing a PR:
+
+- [ ] No unused imports (Biome will catch most)
+- [ ] No commented-out code blocks
+- [ ] No TODO comments for completed work
+- [ ] No console.log statements (except intentional logging)
+- [ ] No unused functions or variables
+- [ ] Old files deleted if replaced
+- [ ] Dependencies removed if no longer used
+
+## Finding Dead Code
+
+### Biome
+
+```bash
+pnpm check
+```
+
+Catches:
+- Unused imports
+- Unused variables
+- Unreachable code
+
+### TypeScript
+
+```bash
+pnpm check-types
+```
+
+Shows errors for:
+- Missing exports that are imported
+- Type mismatches from incomplete migrations
+
+### Manual Review
+
+Look for:
+- Files with no imports pointing to them
+- Exports that nothing imports
+- Routes not in navigation
+- API endpoints not called by frontend
+
+## Special Cases
+
+### Keep for Future Use?
+
+**Don't.** If you need it later, you can:
+1. Find it in git history
+2. Rewrite it (probably better anyway)
+
+### Shared Utilities
+
+Before deleting a utility:
+1. Search for all usages across the monorepo
+2. Check if any package imports it
+3. Check if it's exported from a package's public API
+
+```bash
+# Search for usage
+grep -r "functionName" apps/ packages/
+```
+
+### Database Columns
+
+When removing a database column:
+1. Remove from schema
+2. Create migration
+3. Remove from all queries
+4. Remove from all types
+5. Remove from all UI that displayed it
+
+## tmp/ Directory
+
+The `tmp/` directory is for planning files only:
+- **NEVER** commit `tmp/` to git
+- **NEVER** push `tmp/` to remote
+- Delete planning files after feature completion
+
+This is already in `.gitignore` but be aware.

@@ -1,0 +1,155 @@
+---
+description: "Strict file and folder naming conventions. USE WHEN creating or renaming any file."
+globs: []
+alwaysApply: true
+---
+
+# File & Folder Naming Conventions
+
+## FORBIDDEN File Names
+
+❌ **NEVER create files with these generic names:**
+
+```
+page.tsx / Page.tsx
+index.tsx / Index.tsx (except for package entry points)
+component.tsx / Component.tsx
+view.tsx / View.tsx
+screen.tsx / Screen.tsx
+container.tsx / Container.tsx
+```
+
+These names provide zero context about what the file does.
+
+## Required: Descriptive Names
+
+✅ **Every file MUST be named so its purpose is immediately clear:**
+
+| Bad ❌ | Good ✅ |
+|--------|---------|
+| `page.tsx` | `DashboardView.tsx` |
+| `index.tsx` | `UserSettingsForm.tsx` |
+| `component.tsx` | `AuthenticationModal.tsx` |
+| `Page.tsx` | `TodoListPage.tsx` |
+| `view.tsx` | `ApiKeyOverview.tsx` |
+
+## Naming Patterns by Type
+
+### Route Files (`apps/*/src/routes/`)
+```
+✅ dashboard.tsx
+✅ user-settings.tsx
+✅ api-keys.tsx
+✅ auth/login.tsx
+✅ auth/register.tsx
+
+❌ page.tsx
+❌ index.tsx (for pages)
+```
+
+### Components (`src/components/`)
+```
+✅ UserMenu.tsx
+✅ SignInForm.tsx
+✅ ApiKeyCard.tsx
+✅ NavigationHeader.tsx
+
+❌ Component.tsx
+❌ Card.tsx (too generic unless it's a UI primitive)
+```
+
+### UI Primitives (`src/components/ui/`)
+```
+✅ button.tsx (shadcn convention)
+✅ card.tsx
+✅ input.tsx
+```
+
+### tRPC Routers (`packages/api/src/routers/`)
+```
+✅ todo.ts
+✅ user.ts
+✅ api-key.ts
+✅ organization.ts
+
+❌ router.ts
+❌ index.ts (except for barrel exports)
+```
+
+### Utilities & Functions
+```
+✅ get-user.ts
+✅ auth-client.ts
+✅ format-date.ts
+✅ validate-api-key.ts
+
+❌ utils.ts (exception: single utility file with cn() etc.)
+❌ helpers.ts
+❌ functions.ts
+```
+
+## Folder Structure Rules
+
+### DO: Domain-Based Grouping
+```
+src/
+├── routes/
+│   ├── dashboard.tsx
+│   ├── auth/
+│   │   ├── login.tsx
+│   │   └── register.tsx
+│   └── settings/
+│       ├── profile.tsx
+│       └── api-keys.tsx
+├── components/
+│   ├── auth/
+│   │   ├── SignInForm.tsx
+│   │   └── SignUpForm.tsx
+│   └── dashboard/
+│       ├── StatsCard.tsx
+│       └── RecentActivity.tsx
+```
+
+### DON'T: Folder-Per-File Anti-Pattern
+```
+❌ src/
+    ├── pages/
+    │   ├── Dashboard/
+    │   │   ├── index.tsx
+    │   │   ├── Dashboard.tsx
+    │   │   └── Dashboard.module.css
+    │   ├── Settings/
+    │   │   ├── index.tsx
+    │   │   └── Settings.tsx
+```
+
+## Allowed `index.ts` Usage
+
+`index.ts` is ONLY allowed for:
+
+1. **Package entry points**: `packages/*/src/index.ts`
+2. **Barrel exports**: Re-exporting from a folder
+3. **Schema exports**: `packages/db/src/schema/index.ts`
+
+```typescript
+// ✅ packages/db/src/schema/index.ts (barrel export)
+export * from "./auth";
+export * from "./todo";
+
+// ❌ apps/www/src/routes/index.tsx as a page
+// Use a descriptive name like home.tsx or landing.tsx instead
+```
+
+## Case Conventions
+
+| Type | Convention | Example |
+|------|------------|---------|
+| Route files | kebab-case | `user-settings.tsx` |
+| Components | PascalCase | `UserSettings.tsx` |
+| Utilities | kebab-case | `format-date.ts` |
+| Types/Interfaces | PascalCase | `UserSession.ts` |
+| Constants | SCREAMING_SNAKE | `API_ENDPOINTS.ts` |
+
+## Language
+
+**All file and folder names MUST be in English.**

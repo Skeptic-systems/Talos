@@ -1,0 +1,158 @@
+---
+description: "Changeset workflow for releases. USE WHEN completing a feature or making changes that should be released."
+globs:
+  - ".changeset/**"
+alwaysApply: false
+---
+
+# Changeset Workflow
+
+## Overview
+
+This project uses [Changesets](https://github.com/changesets/changesets) for version management and changelogs.
+
+**After every feature, bug fix, or notable change, create a changeset file.**
+
+## Creating a Changeset
+
+### Interactive Command
+```bash
+pnpm changeset
+```
+
+### Manual Creation
+
+Create a file in `.changeset/` with a random name:
+
+```
+.changeset/
+├── config.json
+└── fuzzy-lions-dance.md    # Random name
+```
+
+## Changeset File Format
+
+```markdown
+---
+"package-name": patch
+---
+
+Short description of the change (max 99 chars per line)
+```
+
+### Version Types
+
+| Type | When to Use |
+|------|-------------|
+| `patch` | Bug fixes, small improvements |
+| `minor` | New features (backwards compatible) |
+| `major` | Breaking changes |
+
+## Line Length Limit
+
+**CRITICAL: Each line in a changeset file MUST NOT exceed 99 characters.**
+
+```markdown
+---
+"@Talos/api": minor
+---
+
+✅ Add user profile endpoint with avatar support
+
+❌ Add comprehensive user profile management endpoint including avatar upload,
+profile picture resizing, and social media link integration for enhanced user
+experience
+```
+
+## Examples
+
+### Feature Addition
+```markdown
+---
+"@Talos/api": minor
+"web": patch
+---
+
+Add API key management for users
+```
+
+### Bug Fix
+```markdown
+---
+"@Talos/auth": patch
+---
+
+Fix session expiration not being checked on protected routes
+```
+
+### Breaking Change
+```markdown
+---
+"@Talos/db": major
+---
+
+Rename user.displayName to user.name in schema
+```
+
+### Multiple Packages
+```markdown
+---
+"@Talos/api": minor
+"@Talos/db": patch
+"web": patch
+"apimanager": patch
+---
+
+Add organization support with team management
+```
+
+## Package Names
+
+Use the exact package names from `package.json`:
+
+| Package | Changeset Name |
+|---------|----------------|
+| `packages/api` | `"@Talos/api"` |
+| `packages/auth` | `"@Talos/auth"` |
+| `packages/db` | `"@Talos/db"` |
+| `packages/env` | `"@Talos/env"` |
+| `apps/www` | `"web"` |
+| `apps/apimanager` | `"apimanager"` |
+| `apps/api` | `"api"` |
+
+## When to Create Changesets
+
+✅ **Create a changeset for:**
+- New features
+- Bug fixes
+- API changes
+- Schema changes
+- Dependency updates (if significant)
+- Performance improvements
+
+❌ **No changeset needed for:**
+- Documentation changes
+- Code refactoring (no behavior change)
+- Test additions
+- Dev tooling changes
+- Cursor rules updates
+
+## Release Process
+
+```bash
+# 1. Create changeset after feature completion
+pnpm changeset
+
+# 2. Version packages (CI usually does this)
+pnpm version
+
+# 3. Publish (CI usually does this)
+pnpm release
+```
+
+## Best Practices
+
+1. **One changeset per logical change** - Don't bundle unrelated changes
+2. **Clear descriptions** - Someone should understand the change from the message
+3. **Correct version bump** - Think about semver implications
+4. **Include all affected packages** - If a change spans packages, list them all

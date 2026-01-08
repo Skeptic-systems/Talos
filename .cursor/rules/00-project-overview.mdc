@@ -1,0 +1,96 @@
+---
+description: "Talos Monorepo - Project structure and conventions. USE WHEN working on any file in this repository."
+globs: []
+alwaysApply: true
+---
+
+# Talos Monorepo Overview
+
+## Tech Stack
+
+This is a **Better-T-Stack** TypeScript monorepo with the following technologies:
+
+| Layer | Technology |
+|-------|------------|
+| **Monorepo** | Turborepo + pnpm |
+| **Runtime** | Bun |
+| **Frontend** | React 19, TanStack Start (Router + Query), Tailwind CSS 4, shadcn/ui |
+| **Backend** | Hono + tRPC |
+| **Auth** | Better-Auth with Drizzle adapter |
+| **Database** | PostgreSQL + Drizzle ORM |
+| **Validation** | Zod |
+| **Linting** | Biome |
+| **Git Hooks** | Lefthook |
+| **Releases** | Changesets |
+
+## Project Structure
+
+```
+Talos/
+├── apps/
+│   ├── api/              # Hono backend with tRPC server (port 3000)
+│   ├── apimanager/       # Admin frontend (TanStack Start, port 3001)
+│   ├── www/              # Website frontend (TanStack Start)
+│   └── desktop/          # Desktop app (Tauri) - if applicable
+├── packages/
+│   ├── api/              # tRPC routers & business logic
+│   ├── auth/             # Better-Auth configuration
+│   ├── db/               # Drizzle schema & database client
+│   ├── config/           # Shared TypeScript configuration
+│   └── env/              # Zod-validated environment variables
+├── .cursor/rules/        # Cursor AI rules (this folder)
+├── env.example           # Environment variable template
+├── biome.json            # Linting & formatting config
+├── turbo.json            # Turborepo task config
+└── pnpm-workspace.yaml   # Workspace definition
+```
+
+## Where Things Go
+
+### Frontend Apps (`apps/www/`, `apps/apimanager/`)
+
+| Type | Location | Naming |
+|------|----------|--------|
+| **Routes/Pages** | `src/routes/` | Feature-based: `dashboard.tsx`, `user-settings.tsx` |
+| **Components** | `src/components/` | PascalCase: `UserMenu.tsx`, `SignInForm.tsx` |
+| **UI Primitives** | `src/components/ui/` | shadcn components |
+| **Utilities** | `src/lib/` or `src/utils/` | camelCase: `utils.ts`, `auth-client.ts` |
+| **Functions** | `src/functions/` | Feature-specific: `get-user.ts` |
+| **Middleware** | `src/middleware/` | Feature-specific: `auth.ts` |
+
+### Backend (`apps/api/`, `packages/api/`)
+
+| Type | Location | Naming |
+|------|----------|--------|
+| **tRPC Routers** | `packages/api/src/routers/` | Feature-based: `todo.ts`, `user.ts` |
+| **Context** | `packages/api/src/context.ts` | Single file |
+| **Hono Server** | `apps/api/src/index.ts` | Entry point |
+
+### Shared Packages
+
+| Package | Purpose |
+|---------|---------|
+| `@Talos/api` | tRPC router definitions, procedures |
+| `@Talos/auth` | Authentication configuration |
+| `@Talos/db` | Database schema, client, migrations |
+| `@Talos/env` | Type-safe environment variables |
+| `@Talos/config` | Shared TypeScript config |
+
+## Key Conventions
+
+1. **Imports**: Use `@Talos/*` for internal packages, `@/` alias for app-local imports
+2. **Env Variables**: Always use `@Talos/env` - never access `process.env` directly
+3. **API Calls**: Use tRPC client via `useTRPC()` hook - never raw fetch for internal APIs
+4. **Styling**: Tailwind CSS with `cn()` utility for class merging
+5. **Forms**: TanStack Form with Zod validation
+6. **State**: TanStack Query for server state, React state for local UI state
+
+## Related Rules
+
+- `10-naming-and-structure.mdc` - File naming conventions
+- `20-pages-and-routing.mdc` - TanStack Router specifics
+- `30-env-and-config.mdc` - Environment variable handling
+- `40-security-hardening.mdc` - Security best practices
+- `50-quality-gates.mdc` - Code quality requirements
+- `60-changesets.mdc` - Release workflow
+- `70-code-cleanup.mdc` - Code hygiene

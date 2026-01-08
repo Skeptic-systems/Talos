@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { apiClient } from "@/lib/api-client";
 
@@ -75,13 +76,31 @@ export const Route = createRootRoute({
 
 function RootDocument() {
 	return (
-		<html lang="en" className="dark">
+		<html lang="en" className="dark" suppressHydrationWarning>
 			<head>
 				<HeadContent />
+				<script
+					dangerouslySetInnerHTML={{
+						__html: `
+							(function() {
+								try {
+									var theme = localStorage.getItem('talos-theme');
+									if (theme === 'light') {
+										document.documentElement.classList.remove('dark');
+									} else {
+										document.documentElement.classList.add('dark');
+									}
+								} catch (e) {}
+							})();
+						`,
+					}}
+				/>
 			</head>
 			<body className="font-sans antialiased">
-				<Outlet />
-				<Toaster richColors position="top-right" />
+				<ThemeProvider>
+					<Outlet />
+					<Toaster richColors position="top-right" />
+				</ThemeProvider>
 				<TanStackRouterDevtools position="bottom-left" />
 				<Scripts />
 			</body>

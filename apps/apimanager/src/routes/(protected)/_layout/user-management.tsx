@@ -212,8 +212,8 @@ function UserManagementPage() {
 		<>
 			<div className="mb-8 flex items-center justify-between">
 				<div>
-					<h1 className="font-bold text-3xl text-zinc-100">User Management</h1>
-					<p className="mt-1 text-zinc-400">
+					<h1 className="font-bold text-3xl text-zinc-900 dark:text-zinc-100">User Management</h1>
+					<p className="mt-1 text-zinc-600 dark:text-zinc-400">
 						Manage users and their permissions
 					</p>
 				</div>
@@ -226,9 +226,9 @@ function UserManagementPage() {
 				</Button>
 			</div>
 
-			<Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
+			<Card className="border-zinc-200 bg-white/50 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-900/50">
 				<CardHeader>
-					<CardTitle className="flex items-center gap-2 text-zinc-100">
+					<CardTitle className="flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
 						<Users className="h-5 w-5" />
 						Users
 					</CardTitle>
@@ -244,12 +244,12 @@ function UserManagementPage() {
 					) : (
 						<Table>
 							<TableHeader>
-								<TableRow className="border-zinc-800 hover:bg-transparent">
-									<TableHead className="text-zinc-400">User</TableHead>
-									<TableHead className="text-zinc-400">Email</TableHead>
-									<TableHead className="text-zinc-400">Role</TableHead>
-									<TableHead className="text-zinc-400">Created</TableHead>
-									<TableHead className="text-right text-zinc-400">
+								<TableRow className="border-zinc-200 hover:bg-transparent dark:border-zinc-800">
+									<TableHead className="text-zinc-600 dark:text-zinc-400">User</TableHead>
+									<TableHead className="text-zinc-600 dark:text-zinc-400">Email</TableHead>
+									<TableHead className="text-zinc-600 dark:text-zinc-400">Role</TableHead>
+									<TableHead className="text-zinc-600 dark:text-zinc-400">Created</TableHead>
+									<TableHead className="text-right text-zinc-600 dark:text-zinc-400">
 										Actions
 									</TableHead>
 								</TableRow>
@@ -258,15 +258,15 @@ function UserManagementPage() {
 								{users.map((user) => (
 									<TableRow
 										key={user.id}
-										className="border-zinc-800 hover:bg-zinc-800/50"
+										className="border-zinc-200 hover:bg-zinc-100/50 dark:border-zinc-800 dark:hover:bg-zinc-800/50"
 									>
 										<TableCell>
 											<div className="flex items-center gap-3">
-												<Avatar className="h-9 w-9 border border-zinc-700">
+												<Avatar className="h-9 w-9 border border-zinc-300 dark:border-zinc-700">
 													{user.image ? (
 														<AvatarImage src={user.image} alt={user.name} />
 													) : null}
-													<AvatarFallback className="bg-zinc-800 text-zinc-300">
+													<AvatarFallback className="bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
 														{user.image ? (
 															getInitials(user.name)
 														) : (
@@ -274,12 +274,12 @@ function UserManagementPage() {
 														)}
 													</AvatarFallback>
 												</Avatar>
-												<span className="font-medium text-zinc-100">
+												<span className="font-medium text-zinc-900 dark:text-zinc-100">
 													{user.name}
 												</span>
 											</div>
 										</TableCell>
-										<TableCell className="text-zinc-400">
+										<TableCell className="text-zinc-600 dark:text-zinc-400">
 											{user.email}
 										</TableCell>
 										<TableCell>
@@ -290,13 +290,13 @@ function UserManagementPage() {
 												}
 												disabled={user.id === session.user?.id}
 											>
-												<SelectTrigger className="w-28 border-zinc-700 bg-zinc-800/50 text-zinc-100">
+												<SelectTrigger className="w-28 border-zinc-300 bg-zinc-50 text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-100">
 													<SelectValue />
 												</SelectTrigger>
-												<SelectContent className="border-zinc-700 bg-zinc-800">
+												<SelectContent className="border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-800">
 													<SelectItem
 														value="user"
-														className="text-zinc-100 focus:bg-zinc-700 focus:text-zinc-100"
+														className="text-zinc-900 focus:bg-zinc-100 focus:text-zinc-900 dark:text-zinc-100 dark:focus:bg-zinc-700 dark:focus:text-zinc-100"
 													>
 														<span className="flex items-center gap-2">
 															<User className="h-4 w-4" />
@@ -305,11 +305,11 @@ function UserManagementPage() {
 													</SelectItem>
 													<SelectItem
 														value="admin"
-														className="text-zinc-100 focus:bg-zinc-700 focus:text-zinc-100"
+														className="text-zinc-900 focus:bg-zinc-100 focus:text-zinc-900 dark:text-zinc-100 dark:focus:bg-zinc-700 dark:focus:text-zinc-100"
 													>
 														<span className="flex items-center gap-2">
 															<ShieldCheck
-																className="h-4 w-4 text-blue-400"
+																className="h-4 w-4 text-blue-500 dark:text-blue-400"
 																weight="fill"
 															/>
 															Admin
@@ -318,7 +318,7 @@ function UserManagementPage() {
 												</SelectContent>
 											</Select>
 										</TableCell>
-										<TableCell className="text-zinc-400">
+										<TableCell className="text-zinc-600 dark:text-zinc-400">
 											{formatDate(user.createdAt)}
 										</TableCell>
 										<TableCell className="text-right">
@@ -330,7 +330,7 @@ function UserManagementPage() {
 													setIsDeleteDialogOpen(true);
 												}}
 												disabled={user.id === session.user?.id}
-												className="text-zinc-400 hover:bg-red-500/10 hover:text-red-400"
+												className="text-zinc-500 hover:bg-red-500/10 hover:text-red-500 dark:text-zinc-400 dark:hover:text-red-400"
 											>
 												<Trash className="h-4 w-4" />
 											</Button>
@@ -343,10 +343,10 @@ function UserManagementPage() {
 				</CardContent>
 			</Card>
 
-			<Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-				<DialogContent className="border-zinc-800 bg-zinc-900">
+				<Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+				<DialogContent className="border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
 					<DialogHeader>
-						<DialogTitle className="flex items-center gap-2 text-zinc-100">
+						<DialogTitle className="flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
 							<Plus className="h-5 w-5" />
 							Create New User
 						</DialogTitle>
@@ -356,7 +356,7 @@ function UserManagementPage() {
 					</DialogHeader>
 					<form onSubmit={handleCreateUser} className="space-y-4">
 						<div className="space-y-2">
-							<Label htmlFor="newUserName" className="text-zinc-300">
+							<Label htmlFor="newUserName" className="text-zinc-700 dark:text-zinc-300">
 								Name
 							</Label>
 							<Input
@@ -364,11 +364,11 @@ function UserManagementPage() {
 								value={newUserName}
 								onChange={(e) => setNewUserName(e.target.value)}
 								placeholder="John Doe"
-								className="border-zinc-700 bg-zinc-800/50 text-zinc-100 placeholder:text-zinc-500"
+								className="border-zinc-300 bg-zinc-50 text-zinc-900 placeholder:text-zinc-400 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-100 dark:placeholder:text-zinc-500"
 							/>
 						</div>
 						<div className="space-y-2">
-							<Label htmlFor="newUserEmail" className="text-zinc-300">
+							<Label htmlFor="newUserEmail" className="text-zinc-700 dark:text-zinc-300">
 								Email
 							</Label>
 							<Input
@@ -377,11 +377,11 @@ function UserManagementPage() {
 								value={newUserEmail}
 								onChange={(e) => setNewUserEmail(e.target.value)}
 								placeholder="john@example.com"
-								className="border-zinc-700 bg-zinc-800/50 text-zinc-100 placeholder:text-zinc-500"
+								className="border-zinc-300 bg-zinc-50 text-zinc-900 placeholder:text-zinc-400 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-100 dark:placeholder:text-zinc-500"
 							/>
 						</div>
 						<div className="space-y-2">
-							<Label htmlFor="newUserPassword" className="text-zinc-300">
+							<Label htmlFor="newUserPassword" className="text-zinc-700 dark:text-zinc-300">
 								Password
 							</Label>
 							<div className="flex gap-2">
@@ -391,13 +391,13 @@ function UserManagementPage() {
 									value={newUserPassword}
 									onChange={(e) => setNewUserPassword(e.target.value)}
 									placeholder="Enter password"
-									className="border-zinc-700 bg-zinc-800/50 text-zinc-100 placeholder:text-zinc-500"
+									className="border-zinc-300 bg-zinc-50 text-zinc-900 placeholder:text-zinc-400 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-100 dark:placeholder:text-zinc-500"
 								/>
 								<Button
 									type="button"
 									variant="outline"
 									onClick={handleGeneratePassword}
-									className="shrink-0 border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
+									className="shrink-0 border-zinc-300 text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
 								>
 									<ArrowsClockwise className="h-4 w-4" />
 								</Button>
@@ -406,7 +406,7 @@ function UserManagementPage() {
 										type="button"
 										variant="outline"
 										onClick={handleCopyPassword}
-										className="shrink-0 border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
+										className="shrink-0 border-zinc-300 text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
 									>
 										<Copy className="h-4 w-4" />
 									</Button>
@@ -414,7 +414,7 @@ function UserManagementPage() {
 							</div>
 						</div>
 						<div className="space-y-2">
-							<Label htmlFor="newUserRole" className="text-zinc-300">
+							<Label htmlFor="newUserRole" className="text-zinc-700 dark:text-zinc-300">
 								Role
 							</Label>
 							<Select
@@ -423,13 +423,13 @@ function UserManagementPage() {
 									setNewUserRole(value)
 								}
 							>
-								<SelectTrigger className="border-zinc-700 bg-zinc-800/50 text-zinc-100">
+								<SelectTrigger className="border-zinc-300 bg-zinc-50 text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-100">
 									<SelectValue />
 								</SelectTrigger>
-								<SelectContent className="border-zinc-700 bg-zinc-800">
+								<SelectContent className="border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-800">
 									<SelectItem
 										value="user"
-										className="text-zinc-100 focus:bg-zinc-700 focus:text-zinc-100"
+										className="text-zinc-900 focus:bg-zinc-100 focus:text-zinc-900 dark:text-zinc-100 dark:focus:bg-zinc-700 dark:focus:text-zinc-100"
 									>
 										<span className="flex items-center gap-2">
 											<User className="h-4 w-4" />
@@ -438,11 +438,11 @@ function UserManagementPage() {
 									</SelectItem>
 									<SelectItem
 										value="admin"
-										className="text-zinc-100 focus:bg-zinc-700 focus:text-zinc-100"
+										className="text-zinc-900 focus:bg-zinc-100 focus:text-zinc-900 dark:text-zinc-100 dark:focus:bg-zinc-700 dark:focus:text-zinc-100"
 									>
 										<span className="flex items-center gap-2">
 											<ShieldCheck
-												className="h-4 w-4 text-blue-400"
+												className="h-4 w-4 text-blue-500 dark:text-blue-400"
 												weight="fill"
 											/>
 											Admin
@@ -456,7 +456,7 @@ function UserManagementPage() {
 								type="button"
 								variant="outline"
 								onClick={() => setIsCreateDialogOpen(false)}
-								className="border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
+								className="border-zinc-300 text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
 							>
 								Cancel
 							</Button>
@@ -473,15 +473,15 @@ function UserManagementPage() {
 			</Dialog>
 
 			<Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-				<DialogContent className="border-zinc-800 bg-zinc-900">
+				<DialogContent className="border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
 					<DialogHeader>
-						<DialogTitle className="flex items-center gap-2 text-zinc-100">
-							<Trash className="h-5 w-5 text-red-400" />
+						<DialogTitle className="flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
+							<Trash className="h-5 w-5 text-red-500 dark:text-red-400" />
 							Delete User
 						</DialogTitle>
 						<DialogDescription>
 							Are you sure you want to delete{" "}
-							<span className="font-medium text-zinc-100">
+							<span className="font-medium text-zinc-900 dark:text-zinc-100">
 								{userToDelete?.name}
 							</span>
 							? This action cannot be undone.
@@ -495,7 +495,7 @@ function UserManagementPage() {
 								setIsDeleteDialogOpen(false);
 								setUserToDelete(null);
 							}}
-							className="border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
+							className="border-zinc-300 text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
 						>
 							Cancel
 						</Button>

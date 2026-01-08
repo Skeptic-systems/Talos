@@ -2,6 +2,7 @@ import { SignOut, User, UserCircle, Users } from "@phosphor-icons/react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
 	DropdownMenu,
@@ -41,7 +42,7 @@ export function AppNavbar({ user }: AppNavbarProps) {
 	};
 
 	return (
-		<header className="sticky top-0 z-50 border-zinc-800 border-b bg-zinc-900/80 backdrop-blur-md">
+		<header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-900/80">
 			<div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
 				<Link to="/dashboard" className="flex items-center gap-3">
 					<img
@@ -49,68 +50,72 @@ export function AppNavbar({ user }: AppNavbarProps) {
 						alt="Talos"
 						className="h-9 w-auto object-contain"
 					/>
-					<span className="font-bold text-xl text-zinc-100">Talos</span>
+					<span className="font-bold text-xl text-zinc-900 dark:text-zinc-100">Talos</span>
 				</Link>
 
-				<DropdownMenu>
-					<DropdownMenuTrigger className="flex cursor-pointer items-center gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-zinc-800/50 focus:outline-none">
-						<div className="hidden text-right sm:block">
-							<p className="font-medium text-sm text-zinc-100">{user.name}</p>
-							<p className="text-xs text-zinc-400 capitalize">{user.role}</p>
-						</div>
-						<Avatar className="h-9 w-9 border border-zinc-700">
-							{user.image ? (
-								<AvatarImage src={user.image} alt={user.name} />
-							) : null}
-							<AvatarFallback className="bg-zinc-800 text-zinc-300">
-								{user.image ? (
-									getInitials(user.name)
-								) : (
-									<UserCircle className="h-6 w-6" weight="fill" />
-								)}
-							</AvatarFallback>
-						</Avatar>
-					</DropdownMenuTrigger>
+				<div className="flex items-center gap-2">
+					<ThemeToggle />
 
-					<DropdownMenuContent align="end" side="bottom" sideOffset={8}>
-						<DropdownMenuLabel className="font-normal">
-							<div className="flex flex-col gap-1">
-								<p className="font-medium text-sm">{user.name}</p>
-								<p className="text-muted-foreground text-xs">{user.email}</p>
+					<DropdownMenu>
+						<DropdownMenuTrigger className="flex cursor-pointer items-center gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800/50 focus:outline-none">
+							<div className="hidden text-right sm:block">
+								<p className="font-medium text-sm text-zinc-900 dark:text-zinc-100">{user.name}</p>
+								<p className="text-xs text-zinc-500 capitalize dark:text-zinc-400">{user.role}</p>
 							</div>
-						</DropdownMenuLabel>
-						<DropdownMenuSeparator />
+							<Avatar className="h-9 w-9 border border-zinc-300 dark:border-zinc-700">
+								{user.image ? (
+									<AvatarImage src={user.image} alt={user.name} />
+								) : null}
+								<AvatarFallback className="bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+									{user.image ? (
+										getInitials(user.name)
+									) : (
+										<UserCircle className="h-6 w-6" weight="fill" />
+									)}
+								</AvatarFallback>
+							</Avatar>
+						</DropdownMenuTrigger>
 
-						<DropdownMenuItem
-							onClick={() => navigate({ to: "/profile" })}
-							className="cursor-pointer"
-						>
-							<User className="mr-2 h-4 w-4" />
-							Profile
-						</DropdownMenuItem>
+						<DropdownMenuContent align="end" side="bottom" sideOffset={8}>
+							<DropdownMenuLabel className="font-normal">
+								<div className="flex flex-col gap-1">
+									<p className="font-medium text-sm">{user.name}</p>
+									<p className="text-muted-foreground text-xs">{user.email}</p>
+								</div>
+							</DropdownMenuLabel>
+							<DropdownMenuSeparator />
 
-						{user.role === "admin" && (
 							<DropdownMenuItem
-								onClick={() => navigate({ to: "/user-management" })}
+								onClick={() => navigate({ to: "/profile" })}
 								className="cursor-pointer"
 							>
-								<Users className="mr-2 h-4 w-4" />
-								User Management
+								<User className="mr-2 h-4 w-4" />
+								Profile
 							</DropdownMenuItem>
-						)}
 
-						<DropdownMenuSeparator />
+							{user.role === "admin" && (
+								<DropdownMenuItem
+									onClick={() => navigate({ to: "/user-management" })}
+									className="cursor-pointer"
+								>
+									<Users className="mr-2 h-4 w-4" />
+									User Management
+								</DropdownMenuItem>
+							)}
 
-						<DropdownMenuItem
-							onClick={handleSignOut}
-							variant="destructive"
-							className="cursor-pointer"
-						>
-							<SignOut className="mr-2 h-4 w-4" />
-							Sign out
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
+							<DropdownMenuSeparator />
+
+							<DropdownMenuItem
+								onClick={handleSignOut}
+								variant="destructive"
+								className="cursor-pointer"
+							>
+								<SignOut className="mr-2 h-4 w-4" />
+								Sign out
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
 			</div>
 		</header>
 	);

@@ -178,14 +178,14 @@ function ProfilePage() {
 	return (
 		<>
 			<div className="mb-8">
-				<h1 className="font-bold text-3xl text-zinc-100">Profile</h1>
-				<p className="mt-1 text-zinc-400">Manage your account settings</p>
+				<h1 className="font-bold text-3xl text-zinc-900 dark:text-zinc-100">Profile</h1>
+				<p className="mt-1 text-zinc-600 dark:text-zinc-400">Manage your account settings</p>
 			</div>
 
 			<div className="grid gap-6 lg:grid-cols-3">
-				<Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm lg:col-span-1">
+				<Card className="border-zinc-200 bg-white/50 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-900/50 lg:col-span-1">
 					<CardHeader>
-						<CardTitle className="text-zinc-100">Avatar</CardTitle>
+						<CardTitle className="text-zinc-900 dark:text-zinc-100">Avatar</CardTitle>
 						<CardDescription>
 							Click to upload a new profile picture
 						</CardDescription>
@@ -195,11 +195,11 @@ function ProfilePage() {
 							type="button"
 							onClick={handleAvatarClick}
 							disabled={isUploadingAvatar}
-							className="group relative cursor-pointer rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900 disabled:cursor-not-allowed disabled:opacity-50"
+							className="group relative cursor-pointer rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-zinc-900 disabled:cursor-not-allowed disabled:opacity-50"
 						>
-							<Avatar className="h-32 w-32 border-2 border-zinc-700">
+							<Avatar className="h-32 w-32 border-2 border-zinc-300 dark:border-zinc-700">
 								{image ? <AvatarImage src={image} alt={name} /> : null}
-								<AvatarFallback className="bg-zinc-800 text-4xl text-zinc-300">
+								<AvatarFallback className="bg-zinc-100 text-4xl text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
 									{image ? (
 										getInitials(name)
 									) : (
@@ -224,7 +224,7 @@ function ProfilePage() {
 								size="sm"
 								onClick={handleRemoveAvatar}
 								disabled={isUploadingAvatar}
-								className="border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
+								className="border-zinc-300 text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
 							>
 								Remove avatar
 							</Button>
@@ -233,9 +233,9 @@ function ProfilePage() {
 				</Card>
 
 				<div className="space-y-6 lg:col-span-2">
-					<Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
+					<Card className="border-zinc-200 bg-white/50 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-900/50">
 						<CardHeader>
-							<CardTitle className="flex items-center gap-2 text-zinc-100">
+							<CardTitle className="flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
 								<User className="h-5 w-5" />
 								Personal Information
 							</CardTitle>
@@ -246,7 +246,7 @@ function ProfilePage() {
 								<div className="space-y-2">
 									<Label
 										htmlFor="name"
-										className="flex items-center gap-2 text-zinc-300"
+										className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300"
 									>
 										<User className="h-4 w-4" />
 										Name
@@ -256,13 +256,13 @@ function ProfilePage() {
 										value={name}
 										onChange={(e) => setName(e.target.value)}
 										placeholder="Your name"
-										className="border-zinc-700 bg-zinc-800/50 text-zinc-100 placeholder:text-zinc-500"
+										className="border-zinc-300 bg-zinc-50 text-zinc-900 placeholder:text-zinc-400 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-100 dark:placeholder:text-zinc-500"
 									/>
 								</div>
 								<div className="space-y-2">
 									<Label
 										htmlFor="email"
-										className="flex items-center gap-2 text-zinc-300"
+										className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300"
 									>
 										<Envelope className="h-4 w-4" />
 										Email
@@ -273,7 +273,7 @@ function ProfilePage() {
 										value={email}
 										onChange={(e) => setEmail(e.target.value)}
 										placeholder="your@email.com"
-										className="border-zinc-700 bg-zinc-800/50 text-zinc-100 placeholder:text-zinc-500"
+										className="border-zinc-300 bg-zinc-50 text-zinc-900 placeholder:text-zinc-400 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-100 dark:placeholder:text-zinc-500"
 									/>
 								</div>
 								<Button
@@ -288,9 +288,9 @@ function ProfilePage() {
 						</CardContent>
 					</Card>
 
-					<Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
+					<Card className="border-zinc-200 bg-white/50 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-900/50">
 						<CardHeader>
-							<CardTitle className="flex items-center gap-2 text-zinc-100">
+							<CardTitle className="flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
 								<Key className="h-5 w-5" />
 								Change Password
 							</CardTitle>
@@ -301,7 +301,7 @@ function ProfilePage() {
 						<CardContent>
 							<form onSubmit={handleChangePassword} className="space-y-4">
 								<div className="space-y-2">
-									<Label htmlFor="currentPassword" className="text-zinc-300">
+									<Label htmlFor="currentPassword" className="text-zinc-700 dark:text-zinc-300">
 										Current Password
 									</Label>
 									<Input
@@ -310,11 +310,11 @@ function ProfilePage() {
 										value={currentPassword}
 										onChange={(e) => setCurrentPassword(e.target.value)}
 										placeholder="Enter current password"
-										className="border-zinc-700 bg-zinc-800/50 text-zinc-100 placeholder:text-zinc-500"
+										className="border-zinc-300 bg-zinc-50 text-zinc-900 placeholder:text-zinc-400 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-100 dark:placeholder:text-zinc-500"
 									/>
 								</div>
 								<div className="space-y-2">
-									<Label htmlFor="newPassword" className="text-zinc-300">
+									<Label htmlFor="newPassword" className="text-zinc-700 dark:text-zinc-300">
 										New Password
 									</Label>
 									<Input
@@ -323,11 +323,11 @@ function ProfilePage() {
 										value={newPassword}
 										onChange={(e) => setNewPassword(e.target.value)}
 										placeholder="Enter new password"
-										className="border-zinc-700 bg-zinc-800/50 text-zinc-100 placeholder:text-zinc-500"
+										className="border-zinc-300 bg-zinc-50 text-zinc-900 placeholder:text-zinc-400 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-100 dark:placeholder:text-zinc-500"
 									/>
 								</div>
 								<div className="space-y-2">
-									<Label htmlFor="confirmPassword" className="text-zinc-300">
+									<Label htmlFor="confirmPassword" className="text-zinc-700 dark:text-zinc-300">
 										Confirm New Password
 									</Label>
 									<Input
@@ -336,7 +336,7 @@ function ProfilePage() {
 										value={confirmPassword}
 										onChange={(e) => setConfirmPassword(e.target.value)}
 										placeholder="Confirm new password"
-										className="border-zinc-700 bg-zinc-800/50 text-zinc-100 placeholder:text-zinc-500"
+										className="border-zinc-300 bg-zinc-50 text-zinc-900 placeholder:text-zinc-400 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-100 dark:placeholder:text-zinc-500"
 									/>
 								</div>
 								<Button

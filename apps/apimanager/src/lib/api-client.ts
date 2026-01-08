@@ -6,6 +6,7 @@ export type ApiUser = {
 	email: string;
 	role: "admin" | "user";
 	image: string | null;
+	createdAt?: string;
 };
 
 export type SessionResponse = {
@@ -27,6 +28,27 @@ export type InitAuthRequest = {
 export type SignInRequest = {
 	email: string;
 	password: string;
+};
+
+export type UpdateProfileRequest = {
+	name?: string;
+	email?: string;
+};
+
+export type ChangePasswordRequest = {
+	currentPassword: string;
+	newPassword: string;
+};
+
+export type CreateUserRequest = {
+	name: string;
+	email: string;
+	password: string;
+	role: "admin" | "user";
+};
+
+export type UpdateRoleRequest = {
+	role: "admin" | "user";
 };
 
 export type ApiError = {
@@ -112,6 +134,68 @@ class ApiClient {
 		await fetch(url, {
 			method: "POST",
 			credentials: "include",
+		});
+	}
+
+	async getProfile(): Promise<{ user: ApiUser }> {
+		return this.request<{ user: ApiUser }>("/v1/users/me");
+	}
+
+	async updateProfile(data: UpdateProfileRequest): Promise<{ user: ApiUser }> {
+		return this.request<{ user: ApiUser }>("/v1/users/me", {
+			method: "PUT",
+			body: JSON.stringify(data),
+		});
+	}
+
+	async changePassword(
+		data: ChangePasswordRequest,
+	): Promise<{ success: boolean; message: string }> {
+		return this.request<{ success: boolean; message: string }>(
+			"/v1/users/me/password",
+			{
+				method: "PUT",
+				body: JSON.stringify(data),
+			},
+		);
+	}
+
+	async updateAvatar(image: string | null): Promise<{ user: ApiUser }> {
+		return this.request<{ user: ApiUser }>("/v1/users/me/avatar", {
+			method: "POST",
+			body: JSON.stringify({ image }),
+		});
+	}
+
+	async listUsers(): Promise<{ users: ApiUser[] }> {
+		return this.request<{ users: ApiUser[] }>("/v1/users");
+	}
+
+	async createUser(data: CreateUserRequest): Promise<{ user: ApiUser }> {
+		return this.request<{ user: ApiUser }>("/v1/users", {
+			method: "POST",
+			body: JSON.stringify(data),
+		});
+	}
+
+	async deleteUser(
+		userId: string,
+	): Promise<{ success: boolean; message: string }> {
+		return this.request<{ success: boolean; message: string }>(
+			`/v1/users/${userId}`,
+			{
+				method: "DELETE",
+			},
+		);
+	}
+
+	async updateUserRole(
+		userId: string,
+		data: UpdateRoleRequest,
+	): Promise<{ user: ApiUser }> {
+		return this.request<{ user: ApiUser }>(`/v1/users/${userId}/role`, {
+			method: "PUT",
+			body: JSON.stringify(data),
 		});
 	}
 }

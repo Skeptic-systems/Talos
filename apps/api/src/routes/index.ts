@@ -2,6 +2,7 @@ import type { Hono } from "hono";
 
 import { authRouter } from "./auth";
 import { systemRouter } from "./system";
+import { usersRouter } from "./users";
 
 type RouteMeta = {
 	path: string;
@@ -17,6 +18,7 @@ type Router = {
 const routers: { prefix: string; router: Router }[] = [
 	{ prefix: "/auth", router: authRouter },
 	{ prefix: "/system", router: systemRouter },
+	{ prefix: "/users", router: usersRouter },
 ];
 
 export function registerRoutes(app: Hono): void {

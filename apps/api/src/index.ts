@@ -49,6 +49,8 @@ app.onError((error, c) => {
 	);
 });
 
+const PORT = 3101;
+
 async function startServer(): Promise<void> {
 	console.log("\n🚀 Starting Talos API Server...\n");
 
@@ -60,11 +62,12 @@ async function startServer(): Promise<void> {
 	}
 
 	printRoutes();
-
-	const port = 3101;
-	console.log(`\n✅ Server running at http://localhost:${port}\n`);
+	console.log(`\n✅ Server running at http://localhost:${PORT}\n`);
 }
 
 startServer();
 
-export default app;
+export default {
+	port: PORT,
+	fetch: app.fetch,
+};

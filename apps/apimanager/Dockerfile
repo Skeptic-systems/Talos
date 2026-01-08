@@ -28,14 +28,12 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=builder /app/apps/apimanager/.output ./apps/apimanager/.output
 COPY --from=builder /app/apps/apimanager/dist ./apps/apimanager/dist
 COPY --from=builder /app/apps/apimanager/package.json ./apps/apimanager/
-COPY --from=builder /app/apps/apimanager/vite.config.ts ./apps/apimanager/
 COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/pnpm-workspace.yaml ./
 
 WORKDIR /app/apps/apimanager
 EXPOSE 3102
-CMD ["pnpm", "serve", "--", "--port", "3102"]
+CMD ["node", "dist/server/server.js"]

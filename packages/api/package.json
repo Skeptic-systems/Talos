@@ -1,28 +1,20 @@
 {
-  "name": "@Talos/api",
-  "type": "module",
-  "exports": {
-    ".": {
-      "default": "./src/index.ts"
-    },
-    "./*": {
-      "default": "./src/*.ts"
-    }
-  },
-  "scripts": {},
-  "dependencies": {
-    "@Talos/auth": "workspace:*",
-    "@Talos/db": "workspace:*",
-    "@Talos/env": "workspace:*",
-    "@trpc/client": "catalog:",
-    "@trpc/server": "catalog:",
-    "@types/pg": "catalog:",
-    "dotenv": "catalog:",
-    "drizzle-orm": "catalog:",
-    "zod": "catalog:"
-  },
-  "devDependencies": {
-    "@Talos/config": "workspace:*",
-    "typescript": "catalog:"
-  }
+	"name": "@Talos/api",
+	"type": "module",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"scripts": {},
+	"dependencies": {
+		"@trpc/server": "catalog:"
+	},
+	"devDependencies": {
+		"@Talos/config": "workspace:*",
+		"typescript": "catalog:"
+	}
 }

@@ -1,46 +1,46 @@
 {
-  "name": "Talos",
-  "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "type": "module",
-  "scripts": {
-    "dev": "turbo dev",
-    "build": "turbo build",
-    "check-types": "turbo check-types",
-    "api:dev": "turbo -F api dev",
-    "apimanager:dev": "turbo -F apimanager dev",
-    "www:dev": "turbo -F www dev",
-    "desktop:dev": "turbo -F desktop tauri:dev",
-    "db:push": "turbo -F @Talos/db db:push",
-    "db:studio": "turbo -F @Talos/db db:studio",
-    "db:generate": "turbo -F @Talos/db db:generate",
-    "db:migrate": "turbo -F @Talos/db db:migrate",
-    "db:start": "turbo -F @Talos/db db:start",
-    "db:watch": "turbo -F @Talos/db db:watch",
-    "db:stop": "turbo -F @Talos/db db:stop",
-    "db:down": "turbo -F @Talos/db db:down",
-    "check": "biome check --write .",
-    "prepare": "lefthook install",
-    "changeset": "changeset",
-    "version": "changeset version",
-    "release": "changeset publish"
-  },
-  "dependencies": {
-    "@Talos/env": "workspace:*",
-    "dotenv": "catalog:",
-    "zod": "catalog:"
-  },
-  "devDependencies": {
-    "@Talos/config": "workspace:*",
-    "@biomejs/biome": "^2.2.0",
-    "@changesets/cli": "^2.27.9",
-    "@types/bun": "catalog:",
-    "lefthook": "^1.10.0",
-    "turbo": "^2.6.3",
-    "typescript": "catalog:"
-  },
-  "packageManager": "pnpm@10.12.1"
+	"name": "Talos",
+	"private": true,
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	],
+	"type": "module",
+	"scripts": {
+		"dev": "turbo dev",
+		"build": "turbo build",
+		"check-types": "turbo check-types",
+		"api:dev": "turbo -F api dev",
+		"apimanager:dev": "turbo -F apimanager dev",
+		"www:dev": "turbo -F www dev",
+		"desktop:dev": "turbo -F desktop tauri:dev",
+		"db:push": "turbo -F @Talos/db db:push",
+		"db:studio": "turbo -F @Talos/db db:studio",
+		"db:generate": "turbo -F @Talos/db db:generate",
+		"db:migrate": "turbo -F @Talos/db db:migrate",
+		"db:start": "turbo -F @Talos/db db:start",
+		"db:watch": "turbo -F @Talos/db db:watch",
+		"db:stop": "turbo -F @Talos/db db:stop",
+		"db:down": "turbo -F @Talos/db db:down",
+		"check": "biome check --write .",
+		"prepare": "lefthook install",
+		"changeset": "changeset",
+		"version": "changeset version",
+		"release": "changeset publish"
+	},
+	"dependencies": {
+		"@Talos/env": "workspace:*",
+		"dotenv": "catalog:",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@Talos/config": "workspace:*",
+		"@biomejs/biome": "^2.2.0",
+		"@changesets/cli": "^2.27.9",
+		"@types/bun": "catalog:",
+		"lefthook": "^1.10.0",
+		"turbo": "^2.6.3",
+		"typescript": "catalog:"
+	},
+	"packageManager": "pnpm@10.12.1"
 }

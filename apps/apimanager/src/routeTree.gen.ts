@@ -9,104 +9,117 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TodosRouteImport } from './routes/todos'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as protectedLayoutRouteImport } from './routes/(protected)/_layout'
+import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
+import { Route as authInitAuthRouteImport } from './routes/(auth)/init-auth'
+import { Route as protectedLayoutDashboardRouteImport } from './routes/(protected)/_layout/dashboard'
 
-const TodosRoute = TodosRouteImport.update({
-  id: '/todos',
-  path: '/todos',
+const protectedLayoutRoute = protectedLayoutRouteImport.update({
+  id: '/(protected)/_layout',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const authSignInRoute = authSignInRouteImport.update({
+  id: '/(auth)/sign-in',
+  path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const authInitAuthRoute = authInitAuthRouteImport.update({
+  id: '/(auth)/init-auth',
+  path: '/init-auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const protectedLayoutDashboardRoute =
+  protectedLayoutDashboardRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => protectedLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
-  '/login': typeof LoginRoute
-  '/todos': typeof TodosRoute
+  '/init-auth': typeof authInitAuthRoute
+  '/sign-in': typeof authSignInRoute
+  '/dashboard': typeof protectedLayoutDashboardRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
-  '/login': typeof LoginRoute
-  '/todos': typeof TodosRoute
+  '/init-auth': typeof authInitAuthRoute
+  '/sign-in': typeof authSignInRoute
+  '/dashboard': typeof protectedLayoutDashboardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
-  '/login': typeof LoginRoute
-  '/todos': typeof TodosRoute
+  '/(auth)/init-auth': typeof authInitAuthRoute
+  '/(auth)/sign-in': typeof authSignInRoute
+  '/(protected)/_layout': typeof protectedLayoutRouteWithChildren
+  '/(protected)/_layout/dashboard': typeof protectedLayoutDashboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/login' | '/todos'
+  fullPaths: '/init-auth' | '/sign-in' | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/login' | '/todos'
-  id: '__root__' | '/' | '/dashboard' | '/login' | '/todos'
+  to: '/init-auth' | '/sign-in' | '/dashboard'
+  id:
+    | '__root__'
+    | '/(auth)/init-auth'
+    | '/(auth)/sign-in'
+    | '/(protected)/_layout'
+    | '/(protected)/_layout/dashboard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRoute
-  LoginRoute: typeof LoginRoute
-  TodosRoute: typeof TodosRoute
+  authInitAuthRoute: typeof authInitAuthRoute
+  authSignInRoute: typeof authSignInRoute
+  protectedLayoutRoute: typeof protectedLayoutRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/todos': {
-      id: '/todos'
-      path: '/todos'
-      fullPath: '/todos'
-      preLoaderRoute: typeof TodosRouteImport
+    '/(protected)/_layout': {
+      id: '/(protected)/_layout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof protectedLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
+    '/(auth)/sign-in': {
+      id: '/(auth)/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof authSignInRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard': {
-      id: '/dashboard'
+    '/(auth)/init-auth': {
+      id: '/(auth)/init-auth'
+      path: '/init-auth'
+      fullPath: '/init-auth'
+      preLoaderRoute: typeof authInitAuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(protected)/_layout/dashboard': {
+      id: '/(protected)/_layout/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof protectedLayoutDashboardRouteImport
+      parentRoute: typeof protectedLayoutRoute
     }
   }
 }
 
+interface protectedLayoutRouteChildren {
+  protectedLayoutDashboardRoute: typeof protectedLayoutDashboardRoute
+}
+
+const protectedLayoutRouteChildren: protectedLayoutRouteChildren = {
+  protectedLayoutDashboardRoute: protectedLayoutDashboardRoute,
+}
+
+const protectedLayoutRouteWithChildren = protectedLayoutRoute._addFileChildren(
+  protectedLayoutRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRoute,
-  LoginRoute: LoginRoute,
-  TodosRoute: TodosRoute,
+  authInitAuthRoute: authInitAuthRoute,
+  authSignInRoute: authSignInRoute,
+  protectedLayoutRoute: protectedLayoutRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

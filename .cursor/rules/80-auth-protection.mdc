@@ -1,0 +1,192 @@
+---
+description: "Authentication and authorization requirements for all routes. USE WHEN creating new API routes or frontend pages."
+globs:
+  - "apps/api/src/routes/**"
+  - "apps/apimanager/src/routes/**"
+alwaysApply: false
+---
+
+# Authentication Protection
+
+## Core Principle
+
+**All routes are protected by default.** Public routes require explicit justification.
+
+## API Routes
+
+### Protected Routes (Default)
+
+All new API routes MUST use the `authMiddleware`:
+
+```typescript
+import { authMiddleware } from "../middleware/auth";
+
+// ✅ Protected route
+apiRoutes.get("/protected-endpoint", authMiddleware, async (c) => {
+  const session = c.get("session");
+  // ...
+});
+
+// ✅ Admin-only route
+import { adminMiddleware } from "../middleware/auth";
+
+apiRoutes.post("/admin-action", adminMiddleware, async (c) => {
+  // ...
+});
+```
+
+### Public Routes (Exceptions)
+
+Public routes are ONLY allowed for:
+
+1. Health checks (`/v1/system/health`)
+2. System status (`/v1/system/status`)
+3. Authentication endpoints (`/v1/auth/sign-in`, `/v1/auth/session`)
+
+When creating a public route, document the security justification:
+
+```typescript
+// Public: Required for login flow before authentication
+apiRoutes.post("/sign-in", async (c) => {
+  // ...
+});
+```
+
+## Frontend Routes
+
+### Protected Pages (Default)
+
+All new pages MUST be placed in the `(protected)/` route group:
+
+```
+apps/apimanager/src/routes/
+├── (auth)/           # Public auth pages only
+│   ├── init-auth.tsx
+│   └── sign-in.tsx
+└── (protected)/      # ALL other pages go here
+    ├── _layout.tsx   # Auth guard
+    └── dashboard.tsx
+```
+
+The `_layout.tsx` enforces authentication:
+
+```typescript
+export const Route = createFileRoute("/(protected)/_layout")({
+  beforeLoad: async () => {
+    const session = await apiClient.getSession();
+    if (!session.authenticated) {
+      throw redirect({ to: "/sign-in" });
+    }
+    return { session };
+  },
+});
+```
+
+### Adding New Protected Pages
+
+```typescript
+// ✅ Correct: In protected route group
+// apps/apimanager/src/routes/(protected)/_layout/settings.tsx
+
+import { createFileRoute } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/(protected)/_layout/settings")({
+  component: SettingsPage,
+});
+```
+
+### Public Pages (Exceptions)
+
+Only these pages should be public:
+
+- `/init-auth` - Initial admin setup
+- `/sign-in` - Login page
+
+## Security Checklist for New Routes
+
+### API Routes
+
+- [ ] Uses `authMiddleware` or `adminMiddleware`
+- [ ] Input validated with Zod
+- [ ] No sensitive data in responses
+- [ ] Rate limiting for sensitive operations
+- [ ] Error messages don't leak internals
+
+### Frontend Pages
+
+- [ ] Located in `(protected)/` group
+- [ ] Uses session context from layout
+- [ ] Handles loading/error states
+- [ ] No sensitive data in client state
+
+## Password Handling
+
+NEVER:
+- Log passwords or tokens
+- Store passwords in plain text
+- Return passwords in API responses
+- Store auth tokens in localStorage
+
+ALWAYS:
+- Use bcrypt for hashing
+- Validate password strength
+- Use httpOnly cookies for sessions
+
+## Session Security
+
+- Sessions stored in database with expiry
+- Cookies: `httpOnly`, `secure`, `sameSite: strict`
+- Session validation on every protected request
+- Automatic session refresh
+
+## Examples
+
+### Creating a New Admin Endpoint
+
+```typescript
+// apps/api/src/routes/users.ts
+import { Hono } from "hono";
+import { z } from "zod";
+import { adminMiddleware } from "../middleware/auth";
+
+const userRoutes = new Hono();
+
+const createUserSchema = z.object({
+  name: z.string().min(1).max(100),
+  email: z.string().email(),
+  role: z.enum(["admin", "user"]),
+});
+
+userRoutes.post("/", adminMiddleware, async (c) => {
+  const body = await c.req.json();
+  const validation = createUserSchema.safeParse(body);
+  
+  if (!validation.success) {
+    return c.json({ error: "Validation failed" }, 400);
+  }
+  
+  // Create user...
+});
+```
+
+### Creating a New Protected Page
+
+```typescript
+// apps/apimanager/src/routes/(protected)/_layout/users.tsx
+import { createFileRoute, useRouteContext } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/(protected)/_layout/users")({
+  component: UsersPage,
+});
+
+function UsersPage() {
+  const { session } = useRouteContext({ from: "/(protected)/_layout" });
+  
+  // Only admins can manage users
+  if (session.user?.role !== "admin") {
+    return <div>Access denied</div>;
+  }
+  
+  return <div>User management</div>;
+}
+```

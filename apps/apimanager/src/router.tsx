@@ -1,72 +1,44 @@
-import type { AppRouter } from "@Talos/api/routers/index";
-
-import { env } from "@Talos/env/web";
-
 import "./index.css";
-import { QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
-import { createTRPCClient, httpBatchLink } from "@trpc/client";
-import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
-import { toast } from "sonner";
 
 import Loader from "./components/loader";
 import { routeTree } from "./routeTree.gen";
-import { TRPCProvider } from "./utils/trpc";
 
 export const queryClient = new QueryClient({
-  queryCache: new QueryCache({
-    onError: (error, query) => {
-      toast.error(error.message, {
-        action: {
-          label: "retry",
-          onClick: query.invalidate,
-        },
-      });
-    },
-  }),
-  defaultOptions: { queries: { staleTime: 60 * 1000 } },
-});
-
-const trpcClient = createTRPCClient<AppRouter>({
-  links: [
-    httpBatchLink({
-      url: `${env.VITE_SERVER_URL}/trpc`,
-      fetch(url, options) {
-        return fetch(url, {
-          ...options,
-          credentials: "include",
-        });
-      },
-    }),
-  ],
-});
-
-const trpc = createTRPCOptionsProxy({
-  client: trpcClient,
-  queryClient: queryClient,
+	defaultOptions: {
+		queries: {
+			staleTime: 60 * 1000,
+			retry: false,
+		},
+	},
 });
 
 export const getRouter = () => {
-  const router = createTanStackRouter({
-    routeTree,
-    scrollRestoration: true,
-    defaultPreloadStaleTime: 0,
-    context: { trpc, queryClient },
-    defaultPendingComponent: () => <Loader />,
-    defaultNotFoundComponent: () => <div>Not Found</div>,
-    Wrap: ({ children }) => (
-      <QueryClientProvider client={queryClient}>
-        <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
-          {children}
-        </TRPCProvider>
-      </QueryClientProvider>
-    ),
-  });
-  return router;
+	const router = createTanStackRouter({
+		routeTree,
+		scrollRestoration: true,
+		defaultPreloadStaleTime: 0,
+		context: { queryClient },
+		defaultPendingComponent: () => <Loader />,
+		defaultNotFoundComponent: () => (
+			<div className="flex min-h-svh items-center justify-center bg-zinc-950">
+				<div className="text-center">
+					<h1 className="font-bold text-4xl text-zinc-100">404</h1>
+					<p className="mt-2 text-zinc-400">Page not found</p>
+				</div>
+			</div>
+		),
+		Wrap: ({ children }) => (
+			<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+		),
+	});
+	return router;
 };
 
 declare module "@tanstack/react-router" {
-  interface Register {
-    router: ReturnType<typeof getRouter>;
-  }
+	interface Register {
+		router: ReturnType<typeof getRouter>;
+	}
 }

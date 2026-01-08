@@ -1,0 +1,49 @@
+name: Talos
+
+include:
+  - path: packages/db/docker-compose.yml
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: Talos-api
+    ports:
+      - "3102:3102"
+    environment:
+      PORT: 3102
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/Talos
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: http://localhost:3102
+      CORS_ORIGIN: http://localhost:3103,http://localhost:3104
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  apimanager:
+    build:
+      context: .
+      dockerfile: apps/apimanager/Dockerfile
+      args:
+        VITE_SERVER_URL: http://localhost:3102
+    container_name: Talos-apimanager
+    ports:
+      - "3103:3103"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  www:
+    build:
+      context: .
+      dockerfile: apps/www/Dockerfile
+      args:
+        VITE_SERVER_URL: http://localhost:3102
+    container_name: Talos-www
+    ports:
+      - "3104:3104"
+    depends_on:
+      - api
+    restart: unless-stopped

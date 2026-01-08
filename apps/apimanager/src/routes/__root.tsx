@@ -1,61 +1,90 @@
-import type { AppRouter } from "@Talos/api/routers/index";
-import type { QueryClient } from "@tanstack/react-query";
-import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
-
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
+import {
+	createRootRoute,
+	HeadContent,
+	Outlet,
+	redirect,
+	Scripts,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 import { Toaster } from "@/components/ui/sonner";
+import { apiClient } from "@/lib/api-client";
 
-import Header from "../components/header";
 import appCss from "../index.css?url";
-export interface RouterAppContext {
-  trpc: TRPCOptionsProxy<AppRouter>;
-  queryClient: QueryClient;
-}
 
-export const Route = createRootRouteWithContext<RouterAppContext>()({
-  head: () => ({
-    meta: [
-      {
-        charSet: "utf-8",
-      },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1",
-      },
-      {
-        title: "My App",
-      },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-    ],
-  }),
+export const Route = createRootRoute({
+	beforeLoad: async ({ location }) => {
+		const isAuthRoute =
+			location.pathname === "/init-auth" || location.pathname === "/sign-in";
 
-  component: RootDocument,
+		if (location.pathname === "/") {
+			const status = await apiClient.getSystemStatus();
+
+			if (!status.initialized) {
+				throw redirect({ to: "/init-auth" });
+			}
+
+			const session = await apiClient.getSession();
+			if (!session.authenticated) {
+				throw redirect({ to: "/sign-in" });
+			}
+
+			throw redirect({ to: "/dashboard" });
+		}
+
+		if (!isAuthRoute) {
+			return;
+		}
+	},
+	head: () => ({
+		meta: [
+			{
+				charSet: "utf-8",
+			},
+			{
+				name: "viewport",
+				content: "width=device-width, initial-scale=1",
+			},
+			{
+				title: "Talos API Manager",
+			},
+		],
+		links: [
+			{
+				rel: "stylesheet",
+				href: appCss,
+			},
+			{
+				rel: "preconnect",
+				href: "https://fonts.googleapis.com",
+			},
+			{
+				rel: "preconnect",
+				href: "https://fonts.gstatic.com",
+				crossOrigin: "anonymous",
+			},
+			{
+				rel: "stylesheet",
+				href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap",
+			},
+		],
+	}),
+
+	component: RootDocument,
 });
 
 function RootDocument() {
-  return (
-    <html lang="en" className="dark">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <div className="grid h-svh grid-rows-[auto_1fr]">
-          <Header />
-          <Outlet />
-        </div>
-        <Toaster richColors />
-        <TanStackRouterDevtools position="bottom-left" />
-        <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
-        <Scripts />
-      </body>
-    </html>
-  );
+	return (
+		<html lang="en" className="dark">
+			<head>
+				<HeadContent />
+			</head>
+			<body className="font-sans antialiased">
+				<Outlet />
+				<Toaster richColors position="top-right" />
+				<TanStackRouterDevtools position="bottom-left" />
+				<Scripts />
+			</body>
+		</html>
+	);
 }

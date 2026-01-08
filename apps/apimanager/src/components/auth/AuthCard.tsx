@@ -1,0 +1,24 @@
+import type { ReactNode } from "react";
+
+import { cn } from "@/lib/utils";
+
+type AuthCardProps = {
+	children: ReactNode;
+	className?: string;
+};
+
+export function AuthCard({ children, className }: AuthCardProps) {
+	return (
+		<div className="flex w-full justify-center px-4">
+			<div
+				className={cn(
+					"w-full max-w-md rounded-xl border border-zinc-800 bg-zinc-900/90 p-8 shadow-2xl backdrop-blur-sm",
+					"fade-in-0 slide-in-from-bottom-4 animate-in duration-500",
+					className,
+				)}
+			>
+				{children}
+			</div>
+		</div>
+	);
+}

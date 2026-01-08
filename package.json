@@ -1,0 +1,39 @@
+{
+  "name": "Talos",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "check-types": "turbo check-types",
+    "dev:native": "turbo -F native dev",
+    "dev:web": "turbo -F web dev",
+    "dev:server": "turbo -F server dev",
+    "db:push": "turbo -F @Talos/db db:push",
+    "db:studio": "turbo -F @Talos/db db:studio",
+    "db:generate": "turbo -F @Talos/db db:generate",
+    "db:migrate": "turbo -F @Talos/db db:migrate",
+    "db:start": "turbo -F @Talos/db db:start",
+    "db:watch": "turbo -F @Talos/db db:watch",
+    "db:stop": "turbo -F @Talos/db db:stop",
+    "db:down": "turbo -F @Talos/db db:down",
+    "check": "biome check --write ."
+  },
+  "dependencies": {
+    "@Talos/env": "workspace:*",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@Talos/config": "workspace:*",
+    "@biomejs/biome": "^2.2.0",
+    "@types/bun": "catalog:",
+    "turbo": "^2.6.3",
+    "typescript": "catalog:"
+  },
+  "packageManager": "pnpm@10.12.1"
+}

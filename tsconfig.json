@@ -1,0 +1,3 @@
+{
+  "extends": "@Talos/config/tsconfig.base.json"
+}

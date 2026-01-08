@@ -61,7 +61,7 @@ async function startServer(): Promise<void> {
 
 	printRoutes();
 
-	const port = 3000;
+	const port = 3101;
 	console.log(`\n✅ Server running at http://localhost:${port}\n`);
 }
 

@@ -31,5 +31,5 @@ COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/package.json ./
 
 WORKDIR /app/apps/api
-EXPOSE 3102
+EXPOSE 3101
 CMD ["bun", "run", "dist/index.mjs"]

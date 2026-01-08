@@ -1,6 +1,6 @@
 {
 	"$schema": "https://turbo.build/schema.json",
-	"ui": "tui",
+	"ui": "stream",
 	"tasks": {
 		"build": {
 			"dependsOn": ["^build"],
@@ -50,6 +50,9 @@
 			"persistent": true
 		},
 		"db:down": {
+			"cache": false
+		},
+		"db:clear": {
 			"cache": false
 		}
 	}

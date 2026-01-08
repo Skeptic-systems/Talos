@@ -14,6 +14,7 @@
 		"apimanager:dev": "turbo -F apimanager dev",
 		"www:dev": "turbo -F www dev",
 		"desktop:dev": "turbo -F desktop tauri:dev",
+		"apps:kill": "npx --yes kill-port 3101 3102 3103",
 		"db:push": "turbo -F @Talos/db db:push",
 		"db:studio": "turbo -F @Talos/db db:studio",
 		"db:generate": "turbo -F @Talos/db db:generate",
@@ -22,8 +23,8 @@
 		"db:watch": "turbo -F @Talos/db db:watch",
 		"db:stop": "turbo -F @Talos/db db:stop",
 		"db:down": "turbo -F @Talos/db db:down",
+		"db:clear": "turbo -F @Talos/db db:clear",
 		"check": "biome check --write .",
-		"prepare": "lefthook install",
 		"changeset": "changeset",
 		"version": "changeset version",
 		"release": "changeset publish"
@@ -38,7 +39,6 @@
 		"@biomejs/biome": "^2.2.0",
 		"@changesets/cli": "^2.27.9",
 		"@types/bun": "catalog:",
-		"lefthook": "^1.10.0",
 		"turbo": "^2.6.3",
 		"typescript": "catalog:"
 	},

@@ -18,7 +18,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-ARG VITE_SERVER_URL=http://localhost:3102
+ARG VITE_SERVER_URL=http://localhost:3101
 ENV VITE_SERVER_URL=${VITE_SERVER_URL}
 RUN pnpm --filter apimanager build
 
@@ -37,5 +37,5 @@ COPY --from=builder /app/package.json ./
 COPY --from=builder /app/pnpm-workspace.yaml ./
 
 WORKDIR /app/apps/apimanager
-EXPOSE 3103
-CMD ["pnpm", "serve", "--", "--port", "3103"]
+EXPOSE 3102
+CMD ["pnpm", "serve", "--", "--port", "3102"]

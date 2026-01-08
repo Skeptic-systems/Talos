@@ -13,6 +13,6 @@ dotenv.config({ path: resolve(__dirname, "../../.env") });
 export default defineConfig({
 	plugins: [tsconfigPaths(), tailwindcss(), tanstackStart(), viteReact()],
 	server: {
-		port: 3001,
+		port: 3102,
 	},
 });

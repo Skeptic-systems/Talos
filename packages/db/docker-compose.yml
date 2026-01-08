@@ -1,13 +1,13 @@
 services:
   postgres:
     image: postgres
-    container_name: Talos-postgres
+    container_name: Talos
     environment:
       POSTGRES_DB: Talos
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     ports:
-      - "3101:5432"
+      - "3100:5432"
     volumes:
       - Talos_postgres_data:/var/lib/postgresql
     healthcheck:

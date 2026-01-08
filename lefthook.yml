@@ -1,9 +1,26 @@
 pre-commit:
   parallel: true
-  commands:
-    lint:
-      runner: pwsh -NoLogo -NonInteractive -Command
+  jobs:
+    - name: biome-check
       run: pnpm biome check --write {staged_files}
+      glob:
+        - "*.js"
+        - "*.jsx"
+        - "*.ts"
+        - "*.tsx"
+        - "*.json"
+        - "*.jsonc"
+        - "*.css"
+      exclude:
+        - "**/node_modules/**"
+        - "**/dist/**"
+        - "**/routeTree.gen.ts"
       stage_fixed: true
-      glob: "*.{js,jsx,ts,tsx,json,jsonc,css}"
-      exclude: "**/node_modules/**"
+
+    - name: cargo-clippy
+      run: cargo clippy --all-targets --all-features --fix --allow-dirty
+      glob:
+        - "**/*.rs"
+        - "**/Cargo.toml"
+      root: apps/desktop/src-tauri
+      stage_fixed: true

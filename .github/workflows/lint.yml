@@ -42,5 +42,5 @@ jobs:
       - name: Run Biome check
         run: pnpm check
         
-      - name: Run Turbo lint
-        run: pnpm lint
+      - name: Run TypeScript check
+        run: pnpm check-types

@@ -6,7 +6,7 @@
 		"build": "vite build",
 		"serve": "vite preview",
 		"dev": "vite dev",
-		"start": "srvx ./dist/server/server.js --prod --static=./dist/client"
+		"start": "srvx ./dist/server/server.js --prod -s dist/client"
 	},
 	"dependencies": {
 		"@Talos/env": "workspace:*",

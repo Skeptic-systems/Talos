@@ -44,7 +44,7 @@
     "@Talos/config": "workspace:*",
     "@tauri-apps/api": "^2.1.1",
     "@tauri-apps/cli": "^2.1.1",
-    "@tauri-apps/plugin-shell": "^2.0.1",
+    "@tauri-apps/plugin-shell": "^2.3.4",
     "@tanstack/react-query-devtools": "^5.91.1",
     "@tanstack/react-router-devtools": "^1.141.1",
     "@types/react": "19.2.7",

@@ -10,7 +10,7 @@ COPY apps/apimanager/ ./apps/apimanager/
 COPY packages/ ./packages/
 
 # VITE_SERVER_URL must point to the API server URL (e.g., https://api-staging.talos.run)
-# This is embedded at build time into the frontend bundle
+# Required as Build-time Argument in Dokploy for client bundle
 ARG VITE_SERVER_URL
 ENV VITE_SERVER_URL=${VITE_SERVER_URL}
 
@@ -29,6 +29,10 @@ COPY --from=builder /app/apps/apimanager/package.json ./apps/apimanager/
 COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/pnpm-workspace.yaml ./
+
+# TanStack Start (SSR) also needs VITE_SERVER_URL at runtime
+# Set via Dokploy "Environment Variables" section:
+#   VITE_SERVER_URL=https://api-staging.talos.run
 
 WORKDIR /app/apps/apimanager
 EXPOSE 3102

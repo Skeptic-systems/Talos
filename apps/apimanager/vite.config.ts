@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
@@ -8,7 +9,10 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
-dotenv.config({ path: resolve(__dirname, "../../.env") });
+const envPath = resolve(__dirname, "../../.env");
+if (existsSync(envPath)) {
+	dotenv.config({ path: envPath });
+}
 
 export default defineConfig({
 	plugins: [tsconfigPaths(), tailwindcss(), tanstackStart(), viteReact()],

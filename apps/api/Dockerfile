@@ -26,16 +26,6 @@ COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/pnpm-workspace.yaml ./
 COPY --from=builder /app/pnpm-lock.yaml ./
-
 WORKDIR /app/apps/api
-
-# Required environment variables (set via Dokploy Environment Variables):
-# - DATABASE_URL: PostgreSQL connection string
-# - BETTER_AUTH_SECRET: Auth secret (min 32 chars)
-# - BETTER_AUTH_URL: Public API URL (e.g., https://api-staging.talos.run)
-# - CORS_ORIGIN: Apimanager URL (e.g., https://apimanager-staging.talos.run)
-# Optional:
-# - DEBUG: Set to "true" for enhanced logging
-
 EXPOSE 3101
 CMD ["bun", "run", "dist/index.mjs"]

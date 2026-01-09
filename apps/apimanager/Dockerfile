@@ -9,17 +9,18 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/apimanager/ ./apps/apimanager/
 COPY packages/ ./packages/
 
-# Build-time arguments - these get embedded into the client bundle
 ARG VITE_API_URL
 ARG VITE_APIMANAGER_URL
 ARG VITE_DEBUG=false
+ARG CACHE_BUST
 
 ENV VITE_API_URL=${VITE_API_URL}
 ENV VITE_APIMANAGER_URL=${VITE_APIMANAGER_URL}
 ENV VITE_DEBUG=${VITE_DEBUG}
 
 RUN pnpm install --frozen-lockfile
-RUN pnpm --filter apimanager build
+RUN echo "Build: VITE_API_URL=${VITE_API_URL}, CACHE=${CACHE_BUST}" && \
+    pnpm --filter apimanager build
 
 FROM base AS runner
 WORKDIR /app
@@ -30,17 +31,12 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/apimanager/node_modules ./apps/apimanager/node_modules
 COPY --from=builder /app/apps/apimanager/dist ./apps/apimanager/dist
 COPY --from=builder /app/apps/apimanager/package.json ./apps/apimanager/
+COPY --from=builder /app/apps/apimanager/vite.config.ts ./apps/apimanager/
 COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/pnpm-workspace.yaml ./
-
-# Runtime environment variables for SSR (TanStack Start server)
-# Set via Dokploy Environment Variables:
-# - VITE_API_URL: API server URL (e.g., https://api-staging.talos.run)
-# - VITE_APIMANAGER_URL: Apimanager URL for cookies (e.g., https://apimanager-staging.talos.run)
-# Optional:
-# - VITE_DEBUG: Set to "true" for enhanced logging
+COPY --from=builder /app/tsconfig.json ./
 
 WORKDIR /app/apps/apimanager
 EXPOSE 3102
-CMD ["node", "dist/server/server.js"]
+CMD ["pnpm", "serve", "--", "--port", "3102"]

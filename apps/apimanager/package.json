@@ -5,10 +5,12 @@
 	"scripts": {
 		"build": "vite build",
 		"serve": "vite preview",
-		"dev": "vite dev"
+		"dev": "vite dev",
+		"start": "srvx ./dist/server/server.js --prod --static=./dist/client"
 	},
 	"dependencies": {
 		"@Talos/env": "workspace:*",
+		"srvx": "^0.10.0",
 		"@base-ui/react": "^1.0.0",
 		"@phosphor-icons/react": "^2.1.10",
 		"@tailwindcss/vite": "^4.1.8",

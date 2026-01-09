@@ -33,7 +33,6 @@ RUN addgroup --system --gid 1001 nodejs && \
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/apimanager/node_modules ./apps/apimanager/node_modules
 COPY --from=builder /app/apps/apimanager/dist ./apps/apimanager/dist
-COPY --from=builder /app/apps/apimanager/server.mjs ./apps/apimanager/
 COPY --from=builder /app/apps/apimanager/package.json ./apps/apimanager/
 COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/package.json ./
@@ -50,4 +49,4 @@ ENV HOST=0.0.0.0
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:3102/ || exit 1
 
-CMD ["node", "server.mjs"]
+CMD ["pnpm", "start"]

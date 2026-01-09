@@ -1,4 +1,4 @@
-import { env } from "@Talos/env/web";
+import { env, logDebug, logError } from "@Talos/env/web";
 
 export type ApiUser = {
 	id: string;
@@ -125,7 +125,8 @@ class ApiClient {
 	private baseUrl: string;
 
 	constructor() {
-		this.baseUrl = env.VITE_SERVER_URL;
+		this.baseUrl = env.VITE_API_URL;
+		logDebug("ApiClient initialized", { baseUrl: this.baseUrl });
 	}
 
 	private async request<T>(
@@ -133,25 +134,39 @@ class ApiClient {
 		options: RequestInit = {},
 	): Promise<T> {
 		const url = `${this.baseUrl}${endpoint}`;
+		logDebug(`API Request: ${options.method || "GET"} ${endpoint}`);
 
-		const response = await fetch(url, {
-			...options,
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-				...options.headers,
-			},
-		});
+		try {
+			const response = await fetch(url, {
+				...options,
+				credentials: "include",
+				headers: {
+					"Content-Type": "application/json",
+					...options.headers,
+				},
+			});
 
-		if (!response.ok) {
-			const error: ApiError = await response.json().catch(() => ({
-				error: "Request failed",
-				message: response.statusText,
-			}));
-			throw error;
+			if (!response.ok) {
+				const error: ApiError = await response.json().catch(() => ({
+					error: "Request failed",
+					message: response.statusText,
+				}));
+				logError(`API Error: ${endpoint}`, error);
+				throw error;
+			}
+
+			logDebug(`API Response: ${endpoint} - ${response.status}`);
+			return response.json();
+		} catch (error) {
+			if (error && typeof error === "object" && "error" in error) {
+				throw error;
+			}
+			logError(`API Network Error: ${endpoint}`, error);
+			throw {
+				error: "Network Error",
+				message: "Unable to connect to API server",
+			} as ApiError;
 		}
-
-		return response.json();
 	}
 
 	async getSystemStatus(): Promise<SystemStatusResponse> {

@@ -1,14 +1,14 @@
-import { existsSync } from "node:fs";
-import { resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import { createEnv } from "@t3-oss/env-core";
-import dotenv from "dotenv";
 import { z } from "zod";
 
-const requiredEnvVars = ["DATABASE_URL", "BETTER_AUTH_SECRET", "BETTER_AUTH_URL", "CORS_ORIGIN"];
-const hasEnvVars = requiredEnvVars.every((key) => process.env[key]);
+const isProduction = process.env.NODE_ENV === "production";
 
-if (!hasEnvVars) {
+if (!isProduction) {
+	const { existsSync } = await import("node:fs");
+	const { resolve } = await import("node:path");
+	const { fileURLToPath } = await import("node:url");
+	const dotenv = await import("dotenv");
+
 	const __dirname = fileURLToPath(new URL(".", import.meta.url));
 	const envPaths = [
 		resolve(__dirname, "../../../.env"),
@@ -19,6 +19,7 @@ if (!hasEnvVars) {
 	for (const envPath of envPaths) {
 		if (existsSync(envPath)) {
 			dotenv.config({ path: envPath });
+			console.log(`[ENV] Loaded environment from: ${envPath}`);
 			break;
 		}
 	}
@@ -33,7 +34,22 @@ export const env = createEnv({
 		NODE_ENV: z
 			.enum(["development", "production", "test"])
 			.default("development"),
+		DEBUG: z.coerce.boolean().default(false),
 	},
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,
 });
+
+export function logDebug(message: string, data?: unknown): void {
+	if (env.DEBUG) {
+		console.log(`[DEBUG] ${message}`, data !== undefined ? data : "");
+	}
+}
+
+export function logInfo(message: string, data?: unknown): void {
+	console.log(`[INFO] ${message}`, data !== undefined ? data : "");
+}
+
+export function logError(message: string, error?: unknown): void {
+	console.error(`[ERROR] ${message}`, error !== undefined ? error : "");
+}

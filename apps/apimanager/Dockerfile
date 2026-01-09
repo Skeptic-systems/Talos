@@ -9,10 +9,14 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/apimanager/ ./apps/apimanager/
 COPY packages/ ./packages/
 
-# VITE_SERVER_URL must point to the API server URL (e.g., https://api-staging.talos.run)
-# Required as Build-time Argument in Dokploy for client bundle
-ARG VITE_SERVER_URL
-ENV VITE_SERVER_URL=${VITE_SERVER_URL}
+# Build-time arguments - these get embedded into the client bundle
+ARG VITE_API_URL
+ARG VITE_APIMANAGER_URL
+ARG VITE_DEBUG=false
+
+ENV VITE_API_URL=${VITE_API_URL}
+ENV VITE_APIMANAGER_URL=${VITE_APIMANAGER_URL}
+ENV VITE_DEBUG=${VITE_DEBUG}
 
 RUN pnpm install --frozen-lockfile
 RUN pnpm --filter apimanager build
@@ -30,9 +34,12 @@ COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/pnpm-workspace.yaml ./
 
-# TanStack Start (SSR) also needs VITE_SERVER_URL at runtime
-# Set via Dokploy "Environment Variables" section:
-#   VITE_SERVER_URL=https://api-staging.talos.run
+# Runtime environment variables for SSR (TanStack Start server)
+# Set via Dokploy Environment Variables:
+# - VITE_API_URL: API server URL (e.g., https://api-staging.talos.run)
+# - VITE_APIMANAGER_URL: Apimanager URL for cookies (e.g., https://apimanager-staging.talos.run)
+# Optional:
+# - VITE_DEBUG: Set to "true" for enhanced logging
 
 WORKDIR /app/apps/apimanager
 EXPOSE 3102

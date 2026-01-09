@@ -9,9 +9,12 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
-const envPath = resolve(__dirname, "../../.env");
-if (existsSync(envPath)) {
-	dotenv.config({ path: envPath });
+
+if (process.env.NODE_ENV !== "production") {
+	const envPath = resolve(__dirname, "../../.env");
+	if (existsSync(envPath)) {
+		dotenv.config({ path: envPath });
+	}
 }
 
 export default defineConfig({

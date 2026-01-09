@@ -18,7 +18,6 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Copy everything needed for runtime + db:push capability
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
@@ -29,9 +28,14 @@ COPY --from=builder /app/pnpm-workspace.yaml ./
 COPY --from=builder /app/pnpm-lock.yaml ./
 
 WORKDIR /app/apps/api
+
+# Required environment variables (set via Dokploy Environment Variables):
+# - DATABASE_URL: PostgreSQL connection string
+# - BETTER_AUTH_SECRET: Auth secret (min 32 chars)
+# - BETTER_AUTH_URL: Public API URL (e.g., https://api-staging.talos.run)
+# - CORS_ORIGIN: Apimanager URL (e.g., https://apimanager-staging.talos.run)
+# Optional:
+# - DEBUG: Set to "true" for enhanced logging
+
 EXPOSE 3101
-
-# To run db:push via Dokploy terminal:
-# cd /app/packages/db && npx drizzle-kit push
-
 CMD ["bun", "run", "dist/index.mjs"]

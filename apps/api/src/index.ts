@@ -1,5 +1,5 @@
 import { auth } from "@Talos/auth";
-import { env } from "@Talos/env/server";
+import { env, logDebug, logError, logInfo } from "@Talos/env/server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -35,6 +35,7 @@ app.get("/", (c) => {
 });
 
 app.notFound((c) => {
+	logDebug("404 Not Found", { path: c.req.path, method: c.req.method });
 	return c.json(
 		{ error: "Not Found", message: "The requested endpoint does not exist" },
 		404,
@@ -42,7 +43,7 @@ app.notFound((c) => {
 });
 
 app.onError((error, c) => {
-	console.error("[API Error]", error);
+	logError("API Error", { path: c.req.path, error: error.message });
 	return c.json(
 		{ error: "Internal Server Error", message: "An unexpected error occurred" },
 		500,
@@ -52,17 +53,23 @@ app.onError((error, c) => {
 const PORT = 3101;
 
 async function startServer(): Promise<void> {
-	console.log("\n🚀 Starting Talos API Server...\n");
+	logInfo("Starting Talos API Server...");
+	logDebug("Environment", {
+		NODE_ENV: env.NODE_ENV,
+		DEBUG: env.DEBUG,
+		BETTER_AUTH_URL: env.BETTER_AUTH_URL,
+		CORS_ORIGIN: env.CORS_ORIGIN,
+	});
 
 	try {
 		await initializeDatabase();
 	} catch (error) {
-		console.error("[Startup] Database initialization failed:", error);
+		logError("Database initialization failed", error);
 		process.exit(1);
 	}
 
 	printRoutes();
-	console.log(`\n✅ Server running at http://localhost:${PORT}\n`);
+	logInfo(`Server running at http://localhost:${PORT}`);
 }
 
 startServer();

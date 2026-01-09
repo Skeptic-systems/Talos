@@ -9,7 +9,9 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/apimanager/ ./apps/apimanager/
 COPY packages/ ./packages/
 
-ARG VITE_SERVER_URL=http://localhost:3101
+# VITE_SERVER_URL must point to the API server URL (e.g., https://api-staging.talos.run)
+# This is embedded at build time into the frontend bundle
+ARG VITE_SERVER_URL
 ENV VITE_SERVER_URL=${VITE_SERVER_URL}
 
 RUN pnpm install --frozen-lockfile

@@ -85,8 +85,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/env
       '@hono/trpc-server':
-        specifier: ^0.4.0
-        version: 0.4.1(@trpc/server@11.8.1(typescript@5.9.3))(hono@4.11.3)
+        specifier: ^0.4.2
+        version: 0.4.2(@trpc/server@11.8.1(typescript@5.9.3))(hono@4.11.4)
       '@trpc/server':
         specifier: 'catalog:'
         version: 11.8.1(typescript@5.9.3)
@@ -97,8 +97,8 @@ importers:
         specifier: 'catalog:'
         version: 17.2.3
       hono:
-        specifier: ^4.8.2
-        version: 4.11.3
+        specifier: ^4.11.4
+        version: 4.11.4
       zod:
         specifier: 'catalog:'
         version: 4.3.5
@@ -186,7 +186,7 @@ importers:
         version: 19.2.3(react@19.2.3)
       shadcn:
         specifier: ^3.6.2
-        version: 3.6.3(@types/node@25.0.3)(hono@4.11.3)(typescript@5.9.3)
+        version: 3.6.3(@types/node@25.0.3)(hono@4.11.4)(typescript@5.9.3)
       sonner:
         specifier: ^2.0.3
         version: 2.0.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -307,7 +307,7 @@ importers:
         version: 19.2.3(react@19.2.3)
       shadcn:
         specifier: ^3.6.2
-        version: 3.6.3(@types/node@25.0.3)(hono@4.11.3)(typescript@5.9.3)
+        version: 3.6.3(@types/node@25.0.3)(hono@4.11.4)(typescript@5.9.3)
       sonner:
         specifier: ^2.0.3
         version: 2.0.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -431,7 +431,7 @@ importers:
         version: 19.2.3(react@19.2.3)
       shadcn:
         specifier: ^3.6.2
-        version: 3.6.3(@types/node@25.0.3)(hono@4.11.3)(typescript@5.9.3)
+        version: 3.6.3(@types/node@25.0.3)(hono@4.11.4)(typescript@5.9.3)
       sonner:
         specifier: ^2.0.3
         version: 2.0.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -1432,8 +1432,8 @@ packages:
     peerDependencies:
       hono: ^4
 
-  '@hono/trpc-server@0.4.1':
-    resolution: {integrity: sha512-5D4gA+MpJxUzqCEDgZMlhxz1G8BkoneR+N+bD7Kt28LPJ0jAhXp1GA3ucpV6KxMBBLvFXIAFAfzdBeRmz12Pkw==}
+  '@hono/trpc-server@0.4.2':
+    resolution: {integrity: sha512-3TDrc42CZLgcTFkXQba+y7JlRWRiyw1AqhLqztWyNS2IFT+3bHld0lxKdGBttCtGKHYx0505dM67RMazjhdZqw==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       '@trpc/server': ^10.10.0 || >11.0.0-rc
@@ -3185,8 +3185,8 @@ packages:
   headers-polyfill@4.0.3:
     resolution: {integrity: sha512-IScLbePpkvO846sIwOtOTDjutRMWdXdJmXdMvk6gCBHxFO8d+QKOQedyZSxFTTFYRSmlgSTDtXqqq4pcenBXLQ==}
 
-  hono@4.11.3:
-    resolution: {integrity: sha512-PmQi306+M/ct/m5s66Hrg+adPnkD5jiO6IjA7WhWw0gSBSo1EcRegwuI1deZ+wd5pzCGynCcn2DprnE4/yEV4w==}
+  hono@4.11.4:
+    resolution: {integrity: sha512-U7tt8JsyrxSRKspfhtLET79pU8K+tInj5QZXs1jSugO1Vq5dFj3kmZsRldo29mTBfcjDRVRXrEZ6LS63Cog9ZA==}
     engines: {node: '>=16.9.0'}
 
   hookable@5.5.3:
@@ -5391,14 +5391,14 @@ snapshots:
 
   '@floating-ui/utils@0.2.10': {}
 
-  '@hono/node-server@1.19.7(hono@4.11.3)':
+  '@hono/node-server@1.19.7(hono@4.11.4)':
     dependencies:
-      hono: 4.11.3
+      hono: 4.11.4
 
-  '@hono/trpc-server@0.4.1(@trpc/server@11.8.1(typescript@5.9.3))(hono@4.11.3)':
+  '@hono/trpc-server@0.4.2(@trpc/server@11.8.1(typescript@5.9.3))(hono@4.11.4)':
     dependencies:
       '@trpc/server': 11.8.1(typescript@5.9.3)
-      hono: 4.11.3
+      hono: 4.11.4
 
   '@inquirer/ansi@1.0.2': {}
 
@@ -5476,9 +5476,9 @@ snapshots:
       globby: 11.1.0
       read-yaml-file: 1.1.0
 
-  '@modelcontextprotocol/sdk@1.25.2(hono@4.11.3)(zod@3.25.76)':
+  '@modelcontextprotocol/sdk@1.25.2(hono@4.11.4)(zod@3.25.76)':
     dependencies:
-      '@hono/node-server': 1.19.7(hono@4.11.3)
+      '@hono/node-server': 1.19.7(hono@4.11.4)
       ajv: 8.17.1
       ajv-formats: 3.0.1(ajv@8.17.1)
       content-type: 1.0.5
@@ -7003,7 +7003,7 @@ snapshots:
 
   headers-polyfill@4.0.3: {}
 
-  hono@4.11.3: {}
+  hono@4.11.4: {}
 
   hookable@5.5.3: {}
 
@@ -7857,7 +7857,7 @@ snapshots:
 
   setprototypeof@1.2.0: {}
 
-  shadcn@3.6.3(@types/node@25.0.3)(hono@4.11.3)(typescript@5.9.3):
+  shadcn@3.6.3(@types/node@25.0.3)(hono@4.11.4)(typescript@5.9.3):
     dependencies:
       '@antfu/ni': 25.0.0
       '@babel/core': 7.28.5
@@ -7865,7 +7865,7 @@ snapshots:
       '@babel/plugin-transform-typescript': 7.28.5(@babel/core@7.28.5)
       '@babel/preset-typescript': 7.28.5(@babel/core@7.28.5)
       '@dotenvx/dotenvx': 1.51.4
-      '@modelcontextprotocol/sdk': 1.25.2(hono@4.11.3)(zod@3.25.76)
+      '@modelcontextprotocol/sdk': 1.25.2(hono@4.11.4)(zod@3.25.76)
       '@types/validate-npm-package-name': 4.0.2
       browserslist: 4.28.1
       commander: 14.0.2

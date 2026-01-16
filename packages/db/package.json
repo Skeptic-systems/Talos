@@ -23,7 +23,7 @@
     "@Talos/env": "workspace:*",
     "dotenv": "catalog:",
     "drizzle-orm": "catalog:",
-    "pg": "^8.16.3",
+    "pg": "^8.17.1",
     "zod": "catalog:"
   },
   "devDependencies": {
